@@ -9,6 +9,7 @@ import MenuIcon from "@mui/icons-material/Menu";
 import Drawer from "@mui/material/Drawer";
 import List from "@mui/material/List";
 import ListItem from "@mui/material/ListItem";
+import ListItemButton from "@mui/material/ListItemButton";
 import ListItemText from "@mui/material/ListItemText";
 import Divider from "@mui/material/Divider";
 import { useHistory } from "react-router-dom";
@@ -66,7 +67,7 @@ function Navbar() {
           </Typography>
 
           {/* Desktop Nav */}
-          <Box sx={{ display: { xs: "none", md: "flex" }, gap: 1, alignItems: "center" }}>
+          <Box sx={{ display: { xs: "none", md: "flex" }, gap: 2, alignItems: "center" }}>
             <Button sx={{ color: "#fff", textTransform: "none", fontSize: "1rem" }} onClick={() => history.push("/")}>
               Home
             </Button>
@@ -133,21 +134,20 @@ function Navbar() {
             { label: "Login", path: "/login" },
             { label: "Register", path: "/register" },
           ].map((item) => (
-            <ListItem
-              button
-              key={item.path}
-              onClick={() => goTo(item.path)}
-              sx={{
-                color: "#B3B3B3",
-                borderRadius: "8px",
-                mb: 0.5,
-                "&:hover": {
-                  backgroundColor: "rgba(229, 9, 20, 0.1)",
-                  color: "#fff",
-                },
-              }}
-            >
-              <ListItemText primary={item.label} />
+            <ListItem key={item.path} disablePadding sx={{ mb: 0.5 }}>
+              <ListItemButton
+                onClick={() => goTo(item.path)}
+                sx={{
+                  color: "#B3B3B3",
+                  borderRadius: "8px",
+                  "&:hover": {
+                    backgroundColor: "rgba(229, 9, 20, 0.1)",
+                    color: "#fff",
+                  },
+                }}
+              >
+                <ListItemText primary={item.label} />
+              </ListItemButton>
             </ListItem>
           ))}
         </List>
