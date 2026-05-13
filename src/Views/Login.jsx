@@ -44,11 +44,13 @@ function Login() {
   return (
     <Box
       sx={{
-        minHeight: "100vh",
+        flexGrow: 1,
         display: "flex",
         alignItems: "center",
         justifyContent: "center",
         px: 2,
+        py: { xs: 8, md: 0 },
+        minHeight: { md: "calc(100vh - 70px)" },
       }}
     >
       <Container maxWidth="xs" disableGutters>
