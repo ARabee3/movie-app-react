@@ -6,17 +6,21 @@ import Button from "@mui/material/Button";
 import Box from "@mui/material/Box";
 import IconButton from "@mui/material/IconButton";
 import MenuIcon from "@mui/icons-material/Menu";
+import SearchIcon from "@mui/icons-material/Search";
 import Drawer from "@mui/material/Drawer";
 import List from "@mui/material/List";
 import ListItem from "@mui/material/ListItem";
 import ListItemButton from "@mui/material/ListItemButton";
 import ListItemText from "@mui/material/ListItemText";
 import Divider from "@mui/material/Divider";
+import TextField from "@mui/material/TextField";
+import InputAdornment from "@mui/material/InputAdornment";
 import { useHistory } from "react-router-dom";
 
 function Navbar() {
   const [scrolled, setScrolled] = useState(false);
   const [mobileOpen, setMobileOpen] = useState(false);
+  const [navSearch, setNavSearch] = useState("");
   const history = useHistory();
 
   useEffect(() => {
@@ -34,6 +38,15 @@ function Navbar() {
   const goTo = (path) => {
     history.push(path);
     setMobileOpen(false);
+  };
+
+  const handleNavSearch = (e) => {
+    e.preventDefault();
+    if (navSearch.trim()) {
+      history.push(`/?q=${encodeURIComponent(navSearch.trim())}`);
+      setNavSearch("");
+      setMobileOpen(false);
+    }
   };
 
   return (
@@ -74,6 +87,37 @@ function Navbar() {
             <Button sx={{ color: "#fff", textTransform: "none", fontSize: "1rem" }} onClick={() => history.push("/movies")}>
               Movies
             </Button>
+
+            <Box component="form" onSubmit={handleNavSearch} sx={{ mx: 1 }}>
+              <TextField
+                placeholder="Search..."
+                size="small"
+                value={navSearch}
+                onChange={(e) => setNavSearch(e.target.value)}
+                slotProps={{
+                  input: {
+                    startAdornment: (
+                      <InputAdornment position="start">
+                        <SearchIcon sx={{ color: "text.secondary", fontSize: 20 }} />
+                      </InputAdornment>
+                    ),
+                    sx: { color: "#fff", fontSize: "0.9rem" },
+                  },
+                }}
+                sx={{
+                  "& .MuiOutlinedInput-root": {
+                    bgcolor: "rgba(255,255,255,0.08)",
+                    borderRadius: 2,
+                    width: 180,
+                    "&:hover": { bgcolor: "rgba(255,255,255,0.12)" },
+                    "& fieldset": { borderColor: "transparent" },
+                    "&:hover fieldset": { borderColor: "transparent" },
+                    "&.Mui-focused fieldset": { borderColor: "primary.main" },
+                  },
+                }}
+              />
+            </Box>
+
             <Button sx={{ color: "#fff", textTransform: "none", fontSize: "1rem" }} onClick={() => history.push("/login")}>
               Login
             </Button>
@@ -128,6 +172,35 @@ function Navbar() {
         </Box>
         <Divider sx={{ borderColor: "rgba(255,255,255,0.1)" }} />
         <List sx={{ px: 1 }}>
+          <Box component="form" onSubmit={handleNavSearch} sx={{ px: 2, py: 1.5 }}>
+            <TextField
+              fullWidth
+              placeholder="Search movies..."
+              size="small"
+              value={navSearch}
+              onChange={(e) => setNavSearch(e.target.value)}
+              slotProps={{
+                input: {
+                  startAdornment: (
+                    <InputAdornment position="start">
+                      <SearchIcon sx={{ color: "text.secondary", fontSize: 20 }} />
+                    </InputAdornment>
+                  ),
+                  sx: { color: "#fff", fontSize: "0.9rem" },
+                },
+              }}
+              sx={{
+                "& .MuiOutlinedInput-root": {
+                  bgcolor: "rgba(255,255,255,0.08)",
+                  borderRadius: 2,
+                  "&:hover": { bgcolor: "rgba(255,255,255,0.12)" },
+                  "& fieldset": { borderColor: "transparent" },
+                  "&:hover fieldset": { borderColor: "transparent" },
+                  "&.Mui-focused fieldset": { borderColor: "primary.main" },
+                },
+              }}
+            />
+          </Box>
           {[
             { label: "Home", path: "/" },
             { label: "Movies", path: "/movies" },
