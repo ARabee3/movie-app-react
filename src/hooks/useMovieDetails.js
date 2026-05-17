@@ -17,7 +17,6 @@ export function useMovieDetails(id) {
   return useQuery({
     queryKey: ["movie", id],
     queryFn: () => fetchMovieDetails(id),
-    enabled: !!creditsQuery.data || creditsQuery.isError,
     staleTime: 60 * 60 * 1000,
     select: (movie) => ({
       ...movie,
