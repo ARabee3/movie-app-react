@@ -4,6 +4,7 @@ import Typography from "@mui/material/Typography";
 import TextField from "@mui/material/TextField";
 import Button from "@mui/material/Button";
 import Box from "@mui/material/Box";
+import CircularProgress from "@mui/material/CircularProgress";
 import { useHistory } from "react-router-dom";
 
 // UI/form-handling practice only — no backend.
@@ -15,62 +16,76 @@ function Register() {
   const [password, setPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
   const [errors, setErrors] = useState({});
+  const [submitting, setSubmitting] = useState(false);
+  const [touched, setTouched] = useState({});
   const history = useHistory();
 
-  const validate = () => {
-    const nextErrors = {};
-
-    if (!email.trim()) {
-      nextErrors.email = "Email is required";
-    } else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
-      nextErrors.email = "Please enter a valid email address";
+  const validateField = (field, value) => {
+    switch (field) {
+      case "email":
+        if (!value.trim()) return "Email is required";
+        if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(value))
+          return "Please enter a valid email address";
+        return undefined;
+      case "name":
+        if (!value.trim()) return "Name is required";
+        return undefined;
+      case "username":
+        if (!value.trim()) return "Username is required";
+        if (value.includes(" ")) return "Username must not contain spaces";
+        return undefined;
+      case "password":
+        if (!value) return "Password is required";
+        if (value.length < 8) return "Password must be at least 8 characters long";
+        if (!/[a-z]/.test(value)) return "Password must contain at least one lowercase letter";
+        if (!/[A-Z]/.test(value)) return "Password must contain at least one uppercase letter";
+        if (!/[0-9]/.test(value)) return "Password must contain at least one digit";
+        if (!/[*@%$#]/.test(value)) return "Password must contain at least one special character (*@%$#)";
+        return undefined;
+      case "confirmPassword":
+        if (!value) return "Confirm password is required";
+        if (value !== password) return "Passwords do not match";
+        return undefined;
+      default:
+        return undefined;
     }
-
-    if (!name.trim()) {
-      nextErrors.name = "Name is required";
-    }
-
-    if (!username.trim()) {
-      nextErrors.username = "Username is required";
-    } else if (username.includes(" ")) {
-      nextErrors.username = "Username must not contain spaces";
-    }
-
-    if (!password) {
-      nextErrors.password = "Password is required";
-    } else if (password.length < 8) {
-      nextErrors.password = "Password must be at least 8 characters long";
-    } else if (!/[a-z]/.test(password)) {
-      nextErrors.password =
-        "Password must contain at least one lowercase letter";
-    } else if (!/[A-Z]/.test(password)) {
-      nextErrors.password =
-        "Password must contain at least one uppercase letter";
-    } else if (!/[0-9]/.test(password)) {
-      nextErrors.password = "Password must contain at least one digit";
-    } else if (!/[*@%$#]/.test(password)) {
-      nextErrors.password =
-        "Password must contain at least one special character (*@%$#)";
-    }
-
-    if (!confirmPassword) {
-      nextErrors.confirmPassword = "Confirm password is required";
-    } else if (confirmPassword !== password) {
-      nextErrors.confirmPassword = "Passwords do not match";
-    }
-
-    return nextErrors;
   };
 
-  const handleSubmit = (e) => {
-    e.preventDefault();
+  const validateAll = () => ({
+    email: validateField("email", email),
+    name: validateField("name", name),
+    username: validateField("username", username),
+    password: validateField("password", password),
+    confirmPassword: validateField("confirmPassword", confirmPassword),
+  });
 
-    const nextErrors = validate();
+  const handleBlur = (field) => (e) => {
+    setTouched((prev) => ({ ...prev, [field]: true }));
+    const error = validateField(field, e.target.value);
+    setErrors((prev) => ({ ...prev, [field]: error }));
+  };
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    setTouched({
+      email: true,
+      name: true,
+      username: true,
+      password: true,
+      confirmPassword: true,
+    });
+
+    const nextErrors = validateAll();
     setErrors(nextErrors);
 
     if (Object.keys(nextErrors).length === 0) {
+      setSubmitting(true);
       // TODO: replace with real auth API call
-      console.log("Registering with:", { email, name, username, password });
+      if (import.meta.env.DEV) {
+        console.log("Register submitted (mock):", { email, name, username });
+      }
+      await new Promise((r) => setTimeout(r, 800));
+      setSubmitting(false);
       history.push("/login");
     }
   };
@@ -125,26 +140,11 @@ function Register() {
               setEmail(e.target.value);
               clearError("email");
             }}
-            error={Boolean(errors.email)}
-            helperText={errors.email}
+            onBlur={handleBlur("email")}
+            error={touched.email && Boolean(errors.email)}
+            helperText={touched.email && errors.email}
             autoComplete="email"
             fullWidth
-            sx={{
-              "& input:-webkit-autofill": {
-                WebkitBoxShadow: "0 0 0 1000px #1F1F1F inset !important",
-                WebkitTextFillColor: "white !important",
-                caretColor: "white",
-                transition: "background-color 5000s ease-in-out 0s",
-              },
-              "& input:-webkit-autofill:focus": {
-                WebkitBoxShadow: "0 0 0 1000px #1F1F1F inset !important",
-                WebkitTextFillColor: "white !important",
-              },
-              "& input:-webkit-autofill:hover": {
-                WebkitBoxShadow: "0 0 0 1000px #1F1F1F inset !important",
-                WebkitTextFillColor: "white !important",
-              },
-            }}
           />
 
           <TextField
@@ -156,26 +156,11 @@ function Register() {
               setName(e.target.value);
               clearError("name");
             }}
-            error={Boolean(errors.name)}
-            helperText={errors.name}
+            onBlur={handleBlur("name")}
+            error={touched.name && Boolean(errors.name)}
+            helperText={touched.name && errors.name}
             autoComplete="name"
             fullWidth
-            sx={{
-              "& input:-webkit-autofill": {
-                WebkitBoxShadow: "0 0 0 1000px #1F1F1F inset !important",
-                WebkitTextFillColor: "white !important",
-                caretColor: "white",
-                transition: "background-color 5000s ease-in-out 0s",
-              },
-              "& input:-webkit-autofill:focus": {
-                WebkitBoxShadow: "0 0 0 1000px #1F1F1F inset !important",
-                WebkitTextFillColor: "white !important",
-              },
-              "& input:-webkit-autofill:hover": {
-                WebkitBoxShadow: "0 0 0 1000px #1F1F1F inset !important",
-                WebkitTextFillColor: "white !important",
-              },
-            }}
           />
 
           <TextField
@@ -187,26 +172,11 @@ function Register() {
               setUsername(e.target.value);
               clearError("username");
             }}
-            error={Boolean(errors.username)}
-            helperText={errors.username}
+            onBlur={handleBlur("username")}
+            error={touched.username && Boolean(errors.username)}
+            helperText={touched.username && errors.username}
             autoComplete="username"
             fullWidth
-            sx={{
-              "& input:-webkit-autofill": {
-                WebkitBoxShadow: "0 0 0 1000px #1F1F1F inset !important",
-                WebkitTextFillColor: "white !important",
-                caretColor: "white",
-                transition: "background-color 5000s ease-in-out 0s",
-              },
-              "& input:-webkit-autofill:focus": {
-                WebkitBoxShadow: "0 0 0 1000px #1F1F1F inset !important",
-                WebkitTextFillColor: "white !important",
-              },
-              "& input:-webkit-autofill:hover": {
-                WebkitBoxShadow: "0 0 0 1000px #1F1F1F inset !important",
-                WebkitTextFillColor: "white !important",
-              },
-            }}
           />
 
           <TextField
@@ -218,25 +188,10 @@ function Register() {
               setPassword(e.target.value);
               clearError("password");
             }}
-            error={Boolean(errors.password)}
-            helperText={errors.password}
+            onBlur={handleBlur("password")}
+            error={touched.password && Boolean(errors.password)}
+            helperText={touched.password && errors.password}
             fullWidth
-            sx={{
-              "& input:-webkit-autofill": {
-                WebkitBoxShadow: "0 0 0 1000px #1F1F1F inset !important",
-                WebkitTextFillColor: "white !important",
-                caretColor: "white",
-                transition: "background-color 5000s ease-in-out 0s",
-              },
-              "& input:-webkit-autofill:focus": {
-                WebkitBoxShadow: "0 0 0 1000px #1F1F1F inset !important",
-                WebkitTextFillColor: "white !important",
-              },
-              "& input:-webkit-autofill:hover": {
-                WebkitBoxShadow: "0 0 0 1000px #1F1F1F inset !important",
-                WebkitTextFillColor: "white !important",
-              },
-            }}
           />
 
           <TextField
@@ -248,25 +203,10 @@ function Register() {
               setConfirmPassword(e.target.value);
               clearError("confirmPassword");
             }}
-            error={Boolean(errors.confirmPassword)}
-            helperText={errors.confirmPassword}
+            onBlur={handleBlur("confirmPassword")}
+            error={touched.confirmPassword && Boolean(errors.confirmPassword)}
+            helperText={touched.confirmPassword && errors.confirmPassword}
             fullWidth
-            sx={{
-              "& input:-webkit-autofill": {
-                WebkitBoxShadow: "0 0 0 1000px #1F1F1F inset !important",
-                WebkitTextFillColor: "white !important",
-                caretColor: "white",
-                transition: "background-color 5000s ease-in-out 0s",
-              },
-              "& input:-webkit-autofill:focus": {
-                WebkitBoxShadow: "0 0 0 1000px #1F1F1F inset !important",
-                WebkitTextFillColor: "white !important",
-              },
-              "& input:-webkit-autofill:hover": {
-                WebkitBoxShadow: "0 0 0 1000px #1F1F1F inset !important",
-                WebkitTextFillColor: "white !important",
-              },
-            }}
           />
 
           <Button
@@ -275,8 +215,9 @@ function Register() {
             color="primary"
             size="large"
             fullWidth
+            disabled={submitting}
           >
-            Register
+            {submitting ? <CircularProgress size={24} color="inherit" /> : "Register"}
           </Button>
         </Box>
       </Container>

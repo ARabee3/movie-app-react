@@ -4,6 +4,7 @@ import Typography from "@mui/material/Typography";
 import TextField from "@mui/material/TextField";
 import Button from "@mui/material/Button";
 import Box from "@mui/material/Box";
+import CircularProgress from "@mui/material/CircularProgress";
 import { useHistory } from "react-router-dom";
 
 // UI/form-handling practice only — no backend.
@@ -12,35 +13,50 @@ function Login() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [errors, setErrors] = useState({});
+  const [submitting, setSubmitting] = useState(false);
+  const [touched, setTouched] = useState({});
   const history = useHistory();
 
-  const validate = () => {
-    const nextErrors = {};
-
-    if (!email.trim()) {
-      nextErrors.email = "Email is required";
-    } else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
-      nextErrors.email = "Please enter a valid email address";
+  const validateField = (field, value) => {
+    if (field === "email") {
+      if (!value.trim()) return "Email is required";
+      if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(value))
+        return "Please enter a valid email address";
     }
-
-    if (!password) {
-      nextErrors.password = "Password is required";
-    } else if (password.length < 8) {
-      nextErrors.password = "Password must be at least 8 characters long";
+    if (field === "password") {
+      if (!value) return "Password is required";
+      if (value.length < 8)
+        return "Password must be at least 8 characters long";
     }
-
-    return nextErrors;
+    return undefined;
   };
 
-  const handleSubmit = (e) => {
-    e.preventDefault();
+  const validateAll = () => ({
+    email: validateField("email", email),
+    password: validateField("password", password),
+  });
 
-    const nextErrors = validate();
+  const handleBlur = (field) => () => {
+    setTouched((prev) => ({ ...prev, [field]: true }));
+    const error = validateField(field, field === "email" ? email : password);
+    setErrors((prev) => ({ ...prev, [field]: error }));
+  };
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    setTouched({ email: true, password: true });
+
+    const nextErrors = validateAll();
     setErrors(nextErrors);
 
     if (Object.keys(nextErrors).length === 0) {
+      setSubmitting(true);
       // TODO: replace with real auth API call
-      console.log("Logging in with:", { email, password });
+      if (import.meta.env.DEV) {
+        console.log("Login submitted (mock):", { email });
+      }
+      await new Promise((r) => setTimeout(r, 800));
+      setSubmitting(false);
       history.push("/");
     }
   };
@@ -91,26 +107,11 @@ function Login() {
                 setErrors((prev) => ({ ...prev, email: undefined }));
               }
             }}
-            error={Boolean(errors.email)}
-            helperText={errors.email}
+            onBlur={handleBlur("email")}
+            error={touched.email && Boolean(errors.email)}
+            helperText={touched.email && errors.email}
             autoComplete="email"
             fullWidth
-            sx={{
-              "& input:-webkit-autofill": {
-                WebkitBoxShadow: "0 0 0 1000px #1F1F1F inset !important",
-                WebkitTextFillColor: "white !important",
-                caretColor: "white",
-                transition: "background-color 5000s ease-in-out 0s",
-              },
-              "& input:-webkit-autofill:focus": {
-                WebkitBoxShadow: "0 0 0 1000px #1F1F1F inset !important",
-                WebkitTextFillColor: "white !important",
-              },
-              "& input:-webkit-autofill:hover": {
-                WebkitBoxShadow: "0 0 0 1000px #1F1F1F inset !important",
-                WebkitTextFillColor: "white !important",
-              },
-            }}
           />
 
           <TextField
@@ -124,25 +125,10 @@ function Login() {
                 setErrors((prev) => ({ ...prev, password: undefined }));
               }
             }}
-            error={Boolean(errors.password)}
-            helperText={errors.password}
+            onBlur={handleBlur("password")}
+            error={touched.password && Boolean(errors.password)}
+            helperText={touched.password && errors.password}
             fullWidth
-            sx={{
-              "& input:-webkit-autofill": {
-                WebkitBoxShadow: "0 0 0 1000px #1F1F1F inset !important",
-                WebkitTextFillColor: "white !important",
-                caretColor: "white",
-                transition: "background-color 5000s ease-in-out 0s",
-              },
-              "& input:-webkit-autofill:focus": {
-                WebkitBoxShadow: "0 0 0 1000px #1F1F1F inset !important",
-                WebkitTextFillColor: "white !important",
-              },
-              "& input:-webkit-autofill:hover": {
-                WebkitBoxShadow: "0 0 0 1000px #1F1F1F inset !important",
-                WebkitTextFillColor: "white !important",
-              },
-            }}
           />
 
           <Button
@@ -151,8 +137,9 @@ function Login() {
             color="primary"
             size="large"
             fullWidth
+            disabled={submitting}
           >
-            Login
+            {submitting ? <CircularProgress size={24} color="inherit" /> : "Login"}
           </Button>
         </Box>
       </Container>

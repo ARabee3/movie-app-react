@@ -6,8 +6,8 @@ import {
   fetchUpcoming,
   fetchDiscoverMovies,
   fetchGenres,
-  buildPosterUrl,
 } from "../api/movieApi";
+import { mapMoviesWithGenres } from "../utils/movieUtils";
 
 const CATEGORY_API = {
   popular: fetchPopularMovies,
@@ -37,20 +37,10 @@ export function useMovieCategory({ category = "popular", page = 1, filters = {} 
     queryKey,
     queryFn,
     staleTime: 5 * 60 * 1000,
-    select: (data) => {
-      const genres = genresQuery.data || [];
-      const genreMap = Object.fromEntries(genres.map((g) => [g.id, g.name]));
-
-      const mappedMovies = data.movies.map((movie) => ({
-        ...movie,
-        poster: buildPosterUrl(movie.poster_path),
-        genreNames: (movie.genre_ids || [])
-          .map((id) => genreMap[id])
-          .filter(Boolean),
-      }));
-
-      return { movies: mappedMovies, totalPages: data.totalPages };
-    },
+    select: (data) => ({
+      movies: mapMoviesWithGenres(data.movies, genresQuery.data),
+      totalPages: data.totalPages,
+    }),
     enabled: !!genresQuery.data || genresQuery.isError,
   });
 
