@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { useHistory } from "react-router-dom";
 import Card from "@mui/material/Card";
 import CardMedia from "@mui/material/CardMedia";
 import CardContent from "@mui/material/CardContent";
@@ -10,6 +11,7 @@ import StarIcon from "@mui/icons-material/Star";
 function MovieCard({ movie }) {
   const [hovered, setHovered] = useState(false);
   const [imgError, setImgError] = useState(false);
+  const history = useHistory();
   const rating = movie.vote_average;
 
   const ratingBg =
@@ -21,6 +23,7 @@ function MovieCard({ movie }) {
 
   return (
     <Card
+      onClick={() => history.push(`/movies/${movie.id}`)}
       onMouseEnter={() => setHovered(true)}
       onMouseLeave={() => setHovered(false)}
       sx={{

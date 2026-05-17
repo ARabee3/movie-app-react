@@ -5,6 +5,7 @@ import { BrowserRouter, Switch, Route } from "react-router-dom";
 import HomePage from "./Views/HomePage";
 import Login from "./Views/Login";
 import Register from "./Views/Register";
+import MovieDetails from "./Views/MovieDetails";
 import Navbar from "./Components/Navbar";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 
@@ -60,11 +61,9 @@ function App() {
                 <Route
                   path="/movies"
                   component={() => <div>Movies Page</div>}
+                  exact
                 />
-                <Route
-                  path="/movies/:id"
-                  component={() => <div>Movie Details Page</div>}
-                />
+                <Route path="/movies/:id" component={MovieDetails} />
                 <Route path="/login" component={Login} />
                 <Route path="/register" component={Register} />
                 <Route
