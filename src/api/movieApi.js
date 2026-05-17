@@ -34,6 +34,37 @@ export async function fetchSearchMovies(query, page = 1) {
   return { movies: res.data.results, totalPages: res.data.total_pages };
 }
 
+export async function fetchNowPlaying(page = 1) {
+  const res = await axios.get(
+    `${BASE}/movie/now_playing?api_key=${KEY}&page=${page}`,
+  );
+  return { movies: res.data.results, totalPages: res.data.total_pages };
+}
+
+export async function fetchTopRated(page = 1) {
+  const res = await axios.get(
+    `${BASE}/movie/top_rated?api_key=${KEY}&page=${page}`,
+  );
+  return { movies: res.data.results, totalPages: res.data.total_pages };
+}
+
+export async function fetchUpcoming(page = 1) {
+  const res = await axios.get(
+    `${BASE}/movie/upcoming?api_key=${KEY}&page=${page}`,
+  );
+  return { movies: res.data.results, totalPages: res.data.total_pages };
+}
+
+export async function fetchDiscoverMovies(filters = {}, page = 1) {
+  const params = new URLSearchParams({ api_key: KEY, page });
+  if (filters.sort_by) params.set("sort_by", filters.sort_by);
+  if (filters.with_genres) params.set("with_genres", filters.with_genres);
+  if (filters.vote_average_gte) params.set("vote_average.gte", filters.vote_average_gte);
+  if (filters.with_original_language) params.set("with_original_language", filters.with_original_language);
+  const res = await axios.get(`${BASE}/discover/movie?${params.toString()}`);
+  return { movies: res.data.results, totalPages: res.data.total_pages };
+}
+
 export function buildPosterUrl(path) {
   return path ? `${IMG_BASE}${path}` : "";
 }

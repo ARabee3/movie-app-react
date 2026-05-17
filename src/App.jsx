@@ -3,6 +3,7 @@ import CssBaseline from "@mui/material/CssBaseline";
 import Box from "@mui/material/Box";
 import { BrowserRouter, Switch, Route } from "react-router-dom";
 import HomePage from "./Views/HomePage";
+import MoviesPage from "./Views/MoviesPage";
 import Login from "./Views/Login";
 import Register from "./Views/Register";
 import MovieDetails from "./Views/MovieDetails";
@@ -58,11 +59,7 @@ function App() {
             <Box component="main" sx={{ flexGrow: 1 }}>
               <Switch>
                 <Route path="/" component={HomePage} exact />
-                <Route
-                  path="/movies"
-                  component={() => <div>Movies Page</div>}
-                  exact
-                />
+                <Route path="/movies" component={MoviesPage} exact />
                 <Route path="/movies/:id" component={MovieDetails} />
                 <Route path="/login" component={Login} />
                 <Route path="/register" component={Register} />
