@@ -49,14 +49,22 @@ function FilterBar({ genres = [], filters, onFilterChange }) {
   };
 
   return (
-    <Box sx={{ display: "flex", flexDirection: "column", gap: 2 }}>
+    <Box sx={{ display: "flex", flexDirection: "column", gap: 3 }}>
       <Box
         sx={{
           display: "flex",
-          gap: 1,
-          flexWrap: "wrap",
+          gap: 1.5,
+          overflowX: "auto",
+          whiteSpace: "nowrap",
+          pb: 1,
+          "&::-webkit-scrollbar": { display: "none" },
+          msOverflowStyle: "none",
+          scrollbarWidth: "none",
           "& .MuiChip-root": {
             transition: "all 0.2s ease",
+            flexShrink: 0,
+            fontWeight: 600,
+            px: 1,
           },
         }}
       >
@@ -66,7 +74,7 @@ function FilterBar({ genres = [], filters, onFilterChange }) {
             label={genre.name}
             variant={selectedGenres.includes(genre.id) ? "filled" : "outlined"}
             onClick={() => toggleGenre(genre.id)}
-            size="small"
+            size="medium"
             sx={{
               color: selectedGenres.includes(genre.id) ? "#fff" : "text.secondary",
               bgcolor: selectedGenres.includes(genre.id) ? "primary.main" : "transparent",
@@ -79,8 +87,8 @@ function FilterBar({ genres = [], filters, onFilterChange }) {
         ))}
       </Box>
 
-      <Box sx={{ display: "flex", gap: 2, flexWrap: "wrap" }}>
-        <FormControl size="small" sx={{ minWidth: 140 }}>
+      <Box sx={{ display: "flex", gap: 3, flexWrap: "wrap" }}>
+        <FormControl size="small" sx={{ minWidth: 160 }}>
           <InputLabel sx={{ color: "text.secondary" }}>Sort By</InputLabel>
           <Select
             value={filters.sort_by || ""}

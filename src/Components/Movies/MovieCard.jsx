@@ -1,25 +1,43 @@
 import { useState } from "react";
 import { useHistory } from "react-router-dom";
-import Card from "@mui/material/Card";
-import CardMedia from "@mui/material/CardMedia";
-import CardContent from "@mui/material/CardContent";
-import Typography from "@mui/material/Typography";
-import Chip from "@mui/material/Chip";
-import Box from "@mui/material/Box";
+import {
+  Card,
+  CardMedia,
+  CardContent,
+  Typography,
+  Box,
+  Skeleton,
+} from "@mui/material";
 import StarIcon from "@mui/icons-material/Star";
 
-function MovieCard({ movie }) {
+function MovieCard({ movie, loading = false }) {
   const [hovered, setHovered] = useState(false);
-  const [imgError, setImgError] = useState(false);
+  const [imgLoaded, setImgLoaded] = useState(false);
   const history = useHistory();
-  const rating = movie.vote_average;
 
-  const ratingBg =
-    rating >= 7.5
-      ? "rgba(46,125,50,0.85)"
-      : rating >= 5
-        ? "rgba(237,108,2,0.85)"
-        : "rgba(211,47,47,0.85)";
+  if (loading) {
+    return (
+      <Box sx={{ width: "100%", maxWidth: 240, mx: "auto" }}>
+        <Skeleton
+          variant="rectangular"
+          sx={{
+            width: "100%",
+            aspectRatio: "2/3",
+            borderRadius: 3,
+            bgcolor: "rgba(255,255,255,0.05)",
+          }}
+        />
+        <Box sx={{ pt: 1.5 }}>
+          <Skeleton width="80%" height={24} sx={{ mb: 0.5 }} />
+          <Skeleton width="40%" height={20} />
+        </Box>
+      </Box>
+    );
+  }
+
+  const rating = movie.vote_average;
+  const ratingColor =
+    rating >= 7.5 ? "#4caf50" : rating >= 5 ? "#ff9800" : "#f44336";
 
   return (
     <Card
@@ -30,174 +48,143 @@ function MovieCard({ movie }) {
         position: "relative",
         borderRadius: 3,
         overflow: "hidden",
-        bgcolor: "background.paper",
+        bgcolor: "transparent",
         cursor: "pointer",
+        width: "100%",
+        maxWidth: 240,
         mx: "auto",
-        maxWidth: 280,
-        transition:
-          "transform 0.35s ease, box-shadow 0.35s ease, border-color 0.35s ease",
-        transform: hovered ? "translateY(-8px)" : "translateY(0)",
+        transition: "transform 0.3s ease, box-shadow 0.3s ease",
+        transform: hovered ? "scale(1.03)" : "scale(1)",
         boxShadow: hovered
-          ? "0 12px 24px rgba(0,0,0,0.5)"
+          ? "0 12px 30px rgba(0,0,0,0.7)"
           : "0 4px 10px rgba(0,0,0,0.3)",
-        border: "1px solid transparent",
-        borderColor: hovered ? "rgba(229,9,20,0.4)" : "transparent",
-        "&::after": {
-          content: '""',
-          position: "absolute",
-          bottom: 0,
-          left: 0,
-          right: 0,
-          height: "50%",
-          background: "linear-gradient(transparent, rgba(0,0,0,0.9))",
-          pointerEvents: "none",
-          zIndex: 1,
+        "&:hover": {
+          zIndex: 10,
         },
       }}
     >
-      {/* HD Badge */}
-      <Box
-        sx={{
-          position: "absolute",
-          top: 12,
-          left: 12,
-          px: 1.5,
-          py: 0.4,
-          borderRadius: "4px",
-          fontSize: "0.75rem",
-          fontWeight: "bold",
-          zIndex: 2,
-          bgcolor: "primary.main",
-          color: "#fff",
-        }}
-      >
-        HD
-      </Box>
+      <Box sx={{ position: "relative", aspectRatio: "2/3" }}>
+        {!imgLoaded && (
+          <Skeleton
+            variant="rectangular"
+            sx={{
+              position: "absolute",
+              top: 0,
+              left: 0,
+              width: "100%",
+              height: "100%",
+              bgcolor: "rgba(255,255,255,0.05)",
+            }}
+          />
+        )}
 
-      {/* Rating Badge */}
-      <Box
-        sx={{
-          position: "absolute",
-          top: 12,
-          right: 12,
-          display: "flex",
-          alignItems: "center",
-          gap: 0.5,
-          px: 1.2,
-          py: 0.4,
-          borderRadius: "4px",
-          zIndex: 2,
-          bgcolor: ratingBg,
-          backdropFilter: "blur(4px)",
-        }}
-      >
-        <StarIcon sx={{ fontSize: 14, color: "#fff" }} />
-        <Typography
-          component="span"
-          sx={{ fontSize: "0.8rem", fontWeight: "bold", color: "#fff" }}
-        >
-          {rating?.toFixed(1)}
-        </Typography>
-      </Box>
-
-      {/* Poster Image */}
-      {imgError ? (
-        <Box
-          sx={{
-            width: "100%",
-            aspectRatio: "2/3",
-            display: "flex",
-            alignItems: "center",
-            justifyContent: "center",
-            bgcolor: "rgba(255,255,255,0.05)",
-          }}
-        >
-          <Typography
-            variant="h3"
-            sx={{ color: "text.secondary", fontWeight: "bold", opacity: 0.3 }}
-          >
-            {movie.title?.charAt(0)}
-          </Typography>
-        </Box>
-      ) : (
         <CardMedia
           component="img"
           image={movie.poster}
           alt={movie.title}
-          onError={() => setImgError(true)}
+          onLoad={() => setImgLoaded(true)}
           sx={{
             width: "100%",
-            aspectRatio: "2/3",
+            height: "100%",
             objectFit: "cover",
-            transition: "transform 0.4s ease",
-            transform: hovered ? "scale(1.08)" : "scale(1)",
+            display: imgLoaded ? "block" : "none",
           }}
         />
-      )}
 
-      {/* Bottom Info */}
-      <CardContent
-        sx={{
-          position: "absolute",
-          bottom: 0,
-          left: 0,
-          right: 0,
-          zIndex: 2,
-          pb: 2.5,
-          px: 2,
-        }}
-      >
-        <Typography
-          variant="h6"
-          sx={{
-            fontWeight: "bold",
-            fontSize: { xs: "0.9rem", sm: "1rem" },
-            lineHeight: 1.2,
-            mb: 0.5,
-            textShadow: "0 2px 8px rgba(0,0,0,0.6)",
-            display: "-webkit-box",
-            WebkitLineClamp: 2,
-            WebkitBoxOrient: "vertical",
-            overflow: "hidden",
-          }}
-        >
-          {movie.title}
-        </Typography>
-
-        <Typography
-          variant="body2"
-          sx={{ color: "rgba(255,255,255,0.7)", mb: 1, fontSize: "0.75rem" }}
-        >
-          {movie.release_date?.slice(0, 4)}
-        </Typography>
-
-        {/* Genre Chips - visible on hover */}
+        {/* Gradient Overlay */}
         <Box
           sx={{
+            position: "absolute",
+            bottom: 0,
+            left: 0,
+            right: 0,
+            height: "80%",
+            background: "linear-gradient(to top, rgba(0,0,0,0.95) 0%, rgba(0,0,0,0.5) 50%, transparent 100%)",
+            opacity: 1,
+            pointerEvents: "none",
+            zIndex: 1,
+          }}
+        />
+
+        {/* Rating badge */}
+        <Box
+          sx={{
+            position: "absolute",
+            top: 10,
+            right: 10,
             display: "flex",
-            gap: 0.6,
-            flexWrap: "wrap",
-            opacity: hovered ? 1 : 0,
-            transform: hovered ? "translateY(0)" : "translateY(8px)",
-            transition: "opacity 0.3s ease, transform 0.3s ease",
+            alignItems: "center",
+            gap: 0.5,
+            px: 1,
+            py: 0.4,
+            borderRadius: 1.5,
+            bgcolor: "rgba(0,0,0,0.7)",
+            backdropFilter: "blur(8px)",
+            border: "1px solid rgba(255,255,255,0.1)",
+            zIndex: 2,
           }}
         >
-          {(movie.genreNames || []).slice(0, 2).map((g) => (
-            <Chip
-              key={g}
-              label={g}
-              size="small"
-              sx={{
-                bgcolor: "rgba(229,9,20,0.85)",
-                color: "#fff",
-                fontSize: "0.7rem",
-                fontWeight: 600,
-                height: 24,
-              }}
-            />
-          ))}
+          <StarIcon sx={{ fontSize: 14, color: ratingColor }} />
+          <Typography
+            sx={{
+              fontSize: "0.8rem",
+              fontWeight: 800,
+              color: "#fff",
+            }}
+          >
+            {rating?.toFixed(1)}
+          </Typography>
         </Box>
-      </CardContent>
+
+        {/* Content Overlay */}
+        <CardContent
+          sx={{
+            position: "absolute",
+            bottom: 0,
+            left: 0,
+            right: 0,
+            p: 2.5,
+            zIndex: 3,
+            transform: hovered ? "translateY(0)" : "translateY(4px)",
+            transition: "transform 0.3s ease",
+          }}
+        >
+          <Typography
+            variant="h6"
+            sx={{
+              fontWeight: 800,
+              fontSize: { xs: "0.95rem", sm: "1.1rem" },
+              lineHeight: 1.2,
+              mb: 0.5,
+              color: "#fff",
+              display: "-webkit-box",
+              WebkitLineClamp: 2,
+              WebkitBoxOrient: "vertical",
+              overflow: "hidden",
+              textShadow: "0 2px 4px rgba(0,0,0,0.5)"
+            }}
+          >
+            {movie.title}
+          </Typography>
+
+          <Box
+            sx={{
+              display: "flex",
+              alignItems: "center",
+              gap: 1.5,
+            }}
+          >
+            <Typography variant="caption" sx={{ color: "rgba(255,255,255,0.6)", fontWeight: 700 }}>
+              {movie.release_date?.slice(0, 4)}
+            </Typography>
+            {movie.genreNames && movie.genreNames.length > 0 && (
+              <Typography variant="caption" sx={{ color: "primary.main", fontWeight: 800, textTransform: "uppercase", fontSize: "0.65rem", letterSpacing: 0.5 }}>
+                {movie.genreNames[0]}
+              </Typography>
+            )}
+          </Box>
+        </CardContent>
+      </Box>
     </Card>
   );
 }

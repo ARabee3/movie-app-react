@@ -1,27 +1,31 @@
 import { useState, useEffect } from "react";
-import AppBar from "@mui/material/AppBar";
-import Toolbar from "@mui/material/Toolbar";
-import Typography from "@mui/material/Typography";
-import Button from "@mui/material/Button";
-import Box from "@mui/material/Box";
-import IconButton from "@mui/material/IconButton";
+import {
+  AppBar,
+  Toolbar,
+  Typography,
+  Button,
+  Box,
+  IconButton,
+  Drawer,
+  List,
+  ListItem,
+  ListItemButton,
+  ListItemText,
+  Divider,
+  TextField,
+  InputAdornment,
+  Container,
+} from "@mui/material";
 import MenuIcon from "@mui/icons-material/Menu";
 import SearchIcon from "@mui/icons-material/Search";
-import Drawer from "@mui/material/Drawer";
-import List from "@mui/material/List";
-import ListItem from "@mui/material/ListItem";
-import ListItemButton from "@mui/material/ListItemButton";
-import ListItemText from "@mui/material/ListItemText";
-import Divider from "@mui/material/Divider";
-import TextField from "@mui/material/TextField";
-import InputAdornment from "@mui/material/InputAdornment";
-import { useHistory } from "react-router-dom";
+import { useHistory, useLocation } from "react-router-dom";
 
 function Navbar() {
   const [scrolled, setScrolled] = useState(false);
   const [mobileOpen, setMobileOpen] = useState(false);
   const [navSearch, setNavSearch] = useState("");
   const history = useHistory();
+  const location = useLocation();
 
   useEffect(() => {
     const handleScroll = () => {
@@ -35,11 +39,6 @@ function Navbar() {
     setMobileOpen(!mobileOpen);
   };
 
-  const goTo = (path) => {
-    history.push(path);
-    setMobileOpen(false);
-  };
-
   const handleNavSearch = (e) => {
     e.preventDefault();
     if (navSearch.trim()) {
@@ -49,109 +48,121 @@ function Navbar() {
     }
   };
 
+  const isHome = location.pathname === "/";
+
   return (
     <>
       <AppBar
-        position="sticky"
+        position="fixed"
         sx={{
           background: scrolled
-            ? "rgba(20, 20, 20, 0.9)"
-            : "linear-gradient(180deg, rgba(0,0,0,0.8) 0%, transparent 100%)",
-          backdropFilter: scrolled ? "blur(10px)" : "none",
-          boxShadow: scrolled ? "0 4px 20px rgba(0,0,0,0.5)" : "none",
-          borderBottom: scrolled ? "1px solid rgba(255,255,255,0.1)" : "none",
-          transition: "all 0.3s ease",
+            ? "rgba(10, 10, 10, 0.95)"
+            : "linear-gradient(to bottom, rgba(0,0,0,0.8) 0%, transparent 100%)",
+          backdropFilter: scrolled ? "blur(15px)" : "none",
+          boxShadow: scrolled ? "0 4px 30px rgba(0,0,0,0.5)" : "none",
+          borderBottom: scrolled ? "1px solid rgba(255,255,255,0.08)" : "none",
+          transition: "all 0.4s cubic-bezier(0.4, 0, 0.2, 1)",
+          zIndex: 1100,
         }}
       >
-        <Toolbar sx={{ justifyContent: "space-between", px: { xs: 2, md: 4 } }}>
-          {/* Logo */}
-          <Typography
-            variant="h6"
-            onClick={() => history.push("/")}
-            sx={{
-              fontWeight: "bold",
-              letterSpacing: 2,
-              color: "#E50914",
-              cursor: "pointer",
-              fontSize: "1.3rem",
-            }}
-          >
-            CineStream
-          </Typography>
+        <Container maxWidth="xl">
+          <Toolbar disableGutters sx={{ height: { xs: 70, md: 80 }, gap: { xs: 2, md: 4 } }}>
+            {/* Logo */}
+            <Typography
+              variant="h5"
+              onClick={() => history.push("/")}
+              sx={{
+                fontWeight: 900,
+                letterSpacing: -1,
+                color: "primary.main",
+                cursor: "pointer",
+                fontSize: { xs: "1.4rem", md: "1.8rem" },
+                textTransform: "uppercase",
+                display: "flex",
+                alignItems: "center",
+              }}
+            >
+              CineStream
+            </Typography>
 
-          {/* Desktop Nav */}
-          <Box sx={{ display: { xs: "none", md: "flex" }, gap: 2, alignItems: "center" }}>
-            <Button sx={{ color: "#fff", textTransform: "none", fontSize: "1rem" }} onClick={() => history.push("/")}>
-              Home
-            </Button>
-            <Button sx={{ color: "#fff", textTransform: "none", fontSize: "1rem" }} onClick={() => history.push("/movies")}>
-              Movies
-            </Button>
+            {/* Desktop Navigation */}
+            <Box sx={{ display: { xs: "none", md: "flex" }, gap: 1 }}>
+              <Button
+                onClick={() => history.push("/movies")}
+                sx={{
+                  color: "white",
+                  textTransform: "none",
+                  fontWeight: 700,
+                  fontSize: "1rem",
+                  px: 2,
+                  "&:hover": { color: "primary.main", bgcolor: "transparent" },
+                }}
+              >
+                Movies
+              </Button>
+            </Box>
 
-            <Box component="form" onSubmit={handleNavSearch} sx={{ mx: 1 }}>
+            {/* Middle Search Bar */}
+            <Box
+              component="form"
+              onSubmit={handleNavSearch}
+              sx={{
+                flexGrow: 1,
+                display: { xs: "none", md: "flex" },
+                justifyContent: "center",
+                maxWidth: 600,
+                mx: "auto",
+              }}
+            >
               <TextField
-                placeholder="Search..."
+                placeholder="Search for movies, actors, genres..."
                 size="small"
+                fullWidth
                 value={navSearch}
                 onChange={(e) => setNavSearch(e.target.value)}
-                slotProps={{
-                  input: {
-                    startAdornment: (
-                      <InputAdornment position="start">
-                        <SearchIcon sx={{ color: "text.secondary", fontSize: 20 }} />
-                      </InputAdornment>
-                    ),
-                    sx: { color: "#fff", fontSize: "0.9rem" },
-                  },
+                InputProps={{
+                  startAdornment: (
+                    <InputAdornment position="start">
+                      <SearchIcon sx={{ color: "rgba(255,255,255,0.4)", fontSize: 20 }} />
+                    </InputAdornment>
+                  ),
                 }}
                 sx={{
                   "& .MuiOutlinedInput-root": {
-                    bgcolor: "rgba(255,255,255,0.08)",
-                    borderRadius: 2,
-                    width: 180,
-                    "&:hover": { bgcolor: "rgba(255,255,255,0.12)" },
-                    "& fieldset": { borderColor: "transparent" },
-                    "&:hover fieldset": { borderColor: "transparent" },
-                    "&.Mui-focused fieldset": { borderColor: "primary.main" },
+                    bgcolor: "rgba(255,255,255,0.05)",
+                    borderRadius: 3,
+                    height: 44,
+                    transition: "all 0.3s ease",
+                    border: "1px solid rgba(255,255,255,0.1)",
+                    "&:hover": {
+                      bgcolor: "rgba(255,255,255,0.1)",
+                      borderColor: "rgba(255,255,255,0.2)",
+                    },
+                    "&.Mui-focused": {
+                      bgcolor: "rgba(255,255,255,0.12)",
+                      borderColor: "primary.main",
+                      boxShadow: "0 0 20px rgba(229,9,20,0.15)",
+                    },
+                    "& fieldset": { border: "none" },
+                  },
+                  "& .MuiInputBase-input": {
+                    color: "white",
+                    fontWeight: 500,
+                    fontSize: "0.95rem",
+                    "&::placeholder": { color: "rgba(255,255,255,0.4)", opacity: 1 },
                   },
                 }}
               />
             </Box>
 
-            {/* TODO: wire to real auth when backend is ready */}
-            <Button sx={{ color: "#fff", textTransform: "none", fontSize: "1rem" }} onClick={() => history.push("/login")}>
-              Login
-            </Button>
-            <Button
-              variant="contained"
-              onClick={() => history.push("/register")}
-              sx={{
-                backgroundColor: "#E50914",
-                color: "#fff",
-                textTransform: "none",
-                fontSize: "1rem",
-                fontWeight: "bold",
-                borderRadius: "6px",
-                px: 2,
-                boxShadow: "0 2px 10px rgba(229, 9, 20, 0.3)",
-                "&:hover": {
-                  backgroundColor: "#b20710",
-                  boxShadow: "0 4px 15px rgba(229, 9, 20, 0.5)",
-                },
-              }}
-            >
-              Register
-            </Button>
-          </Box>
-
-          {/* Mobile Hamburger Icon */}
-          <IconButton
-            sx={{ display: { md: "none" }, color: "#fff" }}
-            onClick={toggleDrawer}
-          >
-            <MenuIcon />
-          </IconButton>
-        </Toolbar>
+            {/* Mobile Actions */}
+            <Box sx={{ display: { xs: "flex", md: "none" }, alignItems: "center", gap: 1, ml: "auto" }}>
+              <IconButton sx={{ color: "white" }} onClick={toggleDrawer}>
+                <MenuIcon />
+              </IconButton>
+            </Box>
+          </Toolbar>
+        </Container>
       </AppBar>
 
       {/* Mobile Drawer */}
@@ -161,71 +172,72 @@ function Navbar() {
         onClose={toggleDrawer}
         PaperProps={{
           sx: {
-            width: 250,
-            backgroundColor: "#1F1F1F",
+            width: 280,
+            bgcolor: "background.default",
+            backgroundImage: "none",
           },
         }}
       >
-        <Box sx={{ p: 2 }}>
-          <Typography variant="h6" sx={{ fontWeight: "bold", color: "#E50914", letterSpacing: 2 }}>
-            CineStream
+        <Box sx={{ p: 3 }}>
+          <Typography
+            variant="h6"
+            sx={{ fontWeight: 900, color: "primary.main", letterSpacing: -0.5, mb: 4 }}
+          >
+            CINESTREAM
           </Typography>
-        </Box>
-        <Divider sx={{ borderColor: "rgba(255,255,255,0.1)" }} />
-        <List sx={{ px: 1 }}>
-          <Box component="form" onSubmit={handleNavSearch} sx={{ px: 2, py: 1.5 }}>
+
+          <Box component="form" onSubmit={handleNavSearch} sx={{ mb: 4 }}>
             <TextField
               fullWidth
-              placeholder="Search movies..."
+              placeholder="Search..."
               size="small"
               value={navSearch}
               onChange={(e) => setNavSearch(e.target.value)}
-              slotProps={{
-                input: {
-                  startAdornment: (
-                    <InputAdornment position="start">
-                      <SearchIcon sx={{ color: "text.secondary", fontSize: 20 }} />
-                    </InputAdornment>
-                  ),
-                  sx: { color: "#fff", fontSize: "0.9rem" },
-                },
+              InputProps={{
+                startAdornment: (
+                  <InputAdornment position="start">
+                    <SearchIcon sx={{ color: "text.secondary", fontSize: 20 }} />
+                  </InputAdornment>
+                ),
               }}
               sx={{
                 "& .MuiOutlinedInput-root": {
-                  bgcolor: "rgba(255,255,255,0.08)",
+                  bgcolor: "rgba(255,255,255,0.05)",
                   borderRadius: 2,
-                  "&:hover": { bgcolor: "rgba(255,255,255,0.12)" },
-                  "& fieldset": { borderColor: "transparent" },
-                  "&:hover fieldset": { borderColor: "transparent" },
-                  "&.Mui-focused fieldset": { borderColor: "primary.main" },
+                  "& fieldset": { borderColor: "rgba(255,255,255,0.1)" },
                 },
               }}
             />
           </Box>
-          {/* TODO: wire Login/Register to real auth when backend is ready */}
-          {[
-            { label: "Home", path: "/" },
-            { label: "Movies", path: "/movies" },
-            { label: "Login", path: "/login" },
-            { label: "Register", path: "/register" },
-          ].map((item) => (
-            <ListItem key={item.path} disablePadding sx={{ mb: 0.5 }}>
-              <ListItemButton
-                onClick={() => goTo(item.path)}
-                sx={{
-                  color: "#B3B3B3",
-                  borderRadius: "8px",
-                  "&:hover": {
-                    backgroundColor: "rgba(229, 9, 20, 0.1)",
-                    color: "#fff",
-                  },
-                }}
-              >
-                <ListItemText primary={item.label} />
-              </ListItemButton>
-            </ListItem>
-          ))}
-        </List>
+
+          <List spacing={1}>
+            {[
+              { label: "Home", path: "/" },
+              { label: "Movies", path: "/movies" },
+              { label: "Profile", path: "/profile" },
+            ].map((item) => (
+              <ListItem key={item.path} disablePadding sx={{ mb: 1 }}>
+                <ListItemButton
+                  onClick={() => {
+                    history.push(item.path);
+                    setMobileOpen(false);
+                  }}
+                  sx={{
+                    borderRadius: 2,
+                    py: 1.5,
+                    "&:hover": { bgcolor: "rgba(229,9,20,0.1)", color: "primary.main" },
+                  }}
+                >
+                  <ListItemText
+                    primary={item.label}
+                    primaryTypographyProps={{ fontWeight: 700, fontSize: "1.1rem" }}
+                  />
+                </ListItemButton>
+              </ListItem>
+            ))}
+          </List>
+
+        </Box>
       </Drawer>
     </>
   );
