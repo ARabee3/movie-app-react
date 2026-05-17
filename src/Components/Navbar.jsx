@@ -118,6 +118,7 @@ function Navbar() {
               />
             </Box>
 
+            {/* TODO: wire to real auth when backend is ready */}
             <Button sx={{ color: "#fff", textTransform: "none", fontSize: "1rem" }} onClick={() => history.push("/login")}>
               Login
             </Button>
@@ -201,6 +202,7 @@ function Navbar() {
               }}
             />
           </Box>
+          {/* TODO: wire Login/Register to real auth when backend is ready */}
           {[
             { label: "Home", path: "/" },
             { label: "Movies", path: "/movies" },

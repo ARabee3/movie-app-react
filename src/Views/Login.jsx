@@ -5,6 +5,9 @@ import TextField from "@mui/material/TextField";
 import Button from "@mui/material/Button";
 import Box from "@mui/material/Box";
 import { useHistory } from "react-router-dom";
+
+// UI/form-handling practice only — no backend.
+// Replace with real authentication (Supabase, Firebase, etc.) for production.
 function Login() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
@@ -36,6 +39,7 @@ function Login() {
     setErrors(nextErrors);
 
     if (Object.keys(nextErrors).length === 0) {
+      // TODO: replace with real auth API call
       console.log("Logging in with:", { email, password });
       history.push("/");
     }

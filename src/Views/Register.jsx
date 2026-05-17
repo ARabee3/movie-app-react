@@ -6,6 +6,8 @@ import Button from "@mui/material/Button";
 import Box from "@mui/material/Box";
 import { useHistory } from "react-router-dom";
 
+// UI/form-handling practice only — no backend.
+// Replace with real authentication (Supabase, Firebase, etc.) for production.
 function Register() {
   const [email, setEmail] = useState("");
   const [name, setName] = useState("");
@@ -67,6 +69,7 @@ function Register() {
     setErrors(nextErrors);
 
     if (Object.keys(nextErrors).length === 0) {
+      // TODO: replace with real auth API call
       console.log("Registering with:", { email, name, username, password });
       history.push("/login");
     }

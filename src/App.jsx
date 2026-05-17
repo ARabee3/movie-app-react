@@ -11,36 +11,35 @@ import Navbar from "./Components/Navbar";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 
 const queryClient = new QueryClient();
-
+const movieTheme = createTheme({
+  palette: {
+    mode: "dark",
+    primary: {
+      main: "#E50914",
+    },
+    secondary: {
+      main: "#F5C518",
+    },
+    background: {
+      default: "#141414",
+      paper: "#1F1F1F",
+    },
+    text: {
+      primary: "#FFFFFF",
+      secondary: "#B3B3B3",
+    },
+  },
+  shape: {
+    borderRadius: 12,
+  },
+  typography: {
+    fontFamily: '"Roboto", "Helvetica", "Arial", sans-serif',
+    h5: {
+      fontWeight: 600,
+    },
+  },
+});
 function App() {
-  const movieTheme = createTheme({
-    palette: {
-      mode: "dark",
-      primary: {
-        main: "#E50914",
-      },
-      secondary: {
-        main: "#F5C518",
-      },
-      background: {
-        default: "#141414",
-        paper: "#1F1F1F",
-      },
-      text: {
-        primary: "#FFFFFF",
-        secondary: "#B3B3B3",
-      },
-    },
-    shape: {
-      borderRadius: 12,
-    },
-    typography: {
-      fontFamily: '"Roboto", "Helvetica", "Arial", sans-serif',
-      h5: {
-        fontWeight: 600,
-      },
-    },
-  });
   return (
     <QueryClientProvider client={queryClient}>
       <ThemeProvider theme={movieTheme}>
