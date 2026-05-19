@@ -1,3 +1,4 @@
+import { useTranslation } from "react-i18next";
 import Box from "@mui/material/Box";
 import Chip from "@mui/material/Chip";
 import FormControl from "@mui/material/FormControl";
@@ -5,36 +6,19 @@ import InputLabel from "@mui/material/InputLabel";
 import Select from "@mui/material/Select";
 import MenuItem from "@mui/material/MenuItem";
 
-const SORT_OPTIONS = [
-  { value: "popularity.desc", label: "Popularity" },
-  { value: "vote_average.desc", label: "Rating" },
-  { value: "primary_release_date.desc", label: "Release Date" },
-  { value: "original_title.asc", label: "Title A-Z" },
+const SORT_VALUES = [
+  "popularity.desc",
+  "vote_average.desc",
+  "primary_release_date.desc",
+  "original_title.asc",
 ];
 
-const RATING_OPTIONS = [
-  { value: "", label: "Any" },
-  { value: "5", label: "5+" },
-  { value: "6", label: "6+" },
-  { value: "7", label: "7+" },
-  { value: "8", label: "8+" },
-];
+const RATING_VALUES = ["", "5", "6", "7", "8"];
 
-const LANGUAGE_OPTIONS = [
-  { value: "", label: "All" },
-  { value: "en", label: "English" },
-  { value: "ar", label: "Arabic" },
-  { value: "fr", label: "French" },
-  { value: "es", label: "Spanish" },
-  { value: "de", label: "German" },
-  { value: "ja", label: "Japanese" },
-  { value: "ko", label: "Korean" },
-  { value: "zh", label: "Chinese" },
-  { value: "hi", label: "Hindi" },
-  { value: "it", label: "Italian" },
-];
+const LANGUAGE_VALUES = ["", "en", "ar", "fr", "es", "de", "ja", "ko", "zh", "hi", "it"];
 
 function FilterBar({ genres = [], filters, onFilterChange }) {
+  const { t } = useTranslation();
   const selectedGenres = filters.with_genres ? filters.with_genres.split(",").map(Number) : [];
 
   const toggleGenre = (genreId) => {
@@ -89,10 +73,10 @@ function FilterBar({ genres = [], filters, onFilterChange }) {
 
       <Box sx={{ display: "flex", gap: 3, flexWrap: "wrap" }}>
         <FormControl size="small" sx={{ minWidth: 160 }}>
-          <InputLabel sx={{ color: "text.secondary" }}>Sort By</InputLabel>
+          <InputLabel sx={{ color: "text.secondary" }}>{t("filter.sort_by")}</InputLabel>
           <Select
             value={filters.sort_by || ""}
-            label="Sort By"
+            label={t("filter.sort_by")}
             onChange={handleChange("sort_by")}
             sx={{
               color: "#fff",
@@ -101,17 +85,19 @@ function FilterBar({ genres = [], filters, onFilterChange }) {
               "&.Mui-focused .MuiOutlinedInput-notchedOutline": { borderColor: "primary.main" },
             }}
           >
-            {SORT_OPTIONS.map((opt) => (
-              <MenuItem key={opt.value} value={opt.value}>{opt.label}</MenuItem>
+            {SORT_VALUES.map((value) => (
+              <MenuItem key={value} value={value}>
+                {t(`filter.sort_options.${value.replace(/\./g, "_")}`)}
+              </MenuItem>
             ))}
           </Select>
         </FormControl>
 
         <FormControl size="small" sx={{ minWidth: 100 }}>
-          <InputLabel sx={{ color: "text.secondary" }}>Rating</InputLabel>
+          <InputLabel sx={{ color: "text.secondary" }}>{t("filter.rating")}</InputLabel>
           <Select
             value={filters.vote_average_gte || ""}
-            label="Rating"
+            label={t("filter.rating")}
             onChange={handleChange("vote_average_gte")}
             sx={{
               color: "#fff",
@@ -120,17 +106,19 @@ function FilterBar({ genres = [], filters, onFilterChange }) {
               "&.Mui-focused .MuiOutlinedInput-notchedOutline": { borderColor: "primary.main" },
             }}
           >
-            {RATING_OPTIONS.map((opt) => (
-              <MenuItem key={opt.label} value={opt.value}>{opt.label}</MenuItem>
+            {RATING_VALUES.map((value) => (
+              <MenuItem key={value || "any"} value={value}>
+                {t(`filter.rating_options.${value || "any"}`)}
+              </MenuItem>
             ))}
           </Select>
         </FormControl>
 
         <FormControl size="small" sx={{ minWidth: 110 }}>
-          <InputLabel sx={{ color: "text.secondary" }}>Language</InputLabel>
+          <InputLabel sx={{ color: "text.secondary" }}>{t("filter.language")}</InputLabel>
           <Select
             value={filters.with_original_language || ""}
-            label="Language"
+            label={t("filter.language")}
             onChange={handleChange("with_original_language")}
             sx={{
               color: "#fff",
@@ -139,8 +127,10 @@ function FilterBar({ genres = [], filters, onFilterChange }) {
               "&.Mui-focused .MuiOutlinedInput-notchedOutline": { borderColor: "primary.main" },
             }}
           >
-            {LANGUAGE_OPTIONS.map((opt) => (
-              <MenuItem key={opt.label} value={opt.value}>{opt.label}</MenuItem>
+            {LANGUAGE_VALUES.map((value) => (
+              <MenuItem key={value || "all"} value={value}>
+                {t(`filter.language_options.${value || "all"}`)}
+              </MenuItem>
             ))}
           </Select>
         </FormControl>

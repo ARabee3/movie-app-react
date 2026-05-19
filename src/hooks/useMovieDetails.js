@@ -7,16 +7,16 @@ import {
   fetchMovieDetails,
 } from "../api/movieApi";
 
-export function useMovieDetails(id) {
+export function useMovieDetails(id, lang = "en-US") {
   const creditsQuery = useQuery({
-    queryKey: ["movie", id, "credits"],
-    queryFn: () => fetchCredits(id, "credits"),
+    queryKey: ["movie", id, "credits", lang],
+    queryFn: () => fetchCredits(id, lang),
     staleTime: 60 * 60 * 1000,
   });
 
   return useQuery({
-    queryKey: ["movie", id],
-    queryFn: () => fetchMovieDetails(id),
+    queryKey: ["movie", id, lang],
+    queryFn: () => fetchMovieDetails(id, lang),
     staleTime: 60 * 60 * 1000,
     select: (movie) => ({
       ...movie,

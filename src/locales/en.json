@@ -1,0 +1,108 @@
+{
+  "nav": {
+    "home": "Home",
+    "movies": "Movies",
+    "login": "Login",
+    "register": "Register",
+    "search_placeholder": "Search movies..."
+  },
+  "homepage": {
+    "title": "Discover Movies",
+    "subtitle": "Browse our collection of critically acclaimed films",
+    "search_placeholder": "Search movies...",
+    "results_for": "Showing results for \"{{query}}\"",
+    "no_results": "No results for \"{{query}}\""
+  },
+  "moviespage": {
+    "title": "Browse Movies",
+    "subtitle": "Explore our collection by category, genre, rating, and more",
+    "categories": {
+      "popular": "Popular",
+      "now_playing": "Now Playing",
+      "top_rated": "Top Rated",
+      "upcoming": "Upcoming"
+    },
+    "filtered_results": "Showing filtered results"
+  },
+  "filter": {
+    "sort_by": "Sort By",
+    "rating": "Rating",
+    "language": "Language",
+    "sort_options": {
+      "popularity_desc": "Popularity",
+      "vote_average_desc": "Rating",
+      "release_date_desc": "Release Date",
+      "title_asc": "Title A-Z"
+    },
+    "rating_options": {
+      "any": "Any",
+      "5": "5+",
+      "6": "6+",
+      "7": "7+",
+      "8": "8+"
+    },
+    "language_options": {
+      "all": "All",
+      "en": "English",
+      "ar": "Arabic",
+      "fr": "French",
+      "es": "Spanish",
+      "de": "German",
+      "ja": "Japanese",
+      "ko": "Korean",
+      "zh": "Chinese",
+      "hi": "Hindi",
+      "it": "Italian"
+    }
+  },
+  "movie_details": {
+    "overview": "Overview",
+    "top_cast": "Top Cast",
+    "status": "Status",
+    "language": "Language",
+    "budget": "Budget",
+    "revenue": "Revenue",
+    "min": "min",
+    "back": "Back",
+    "watch_now": "Watch Now",
+    "movie_info": "Movie Details"
+  },
+  "auth": {
+    "signin": "Sign In",
+    "signup": "Sign Up",
+    "email": "Email Address",
+    "password": "Password",
+    "name": "Name",
+    "username": "Username",
+    "confirm_password": "Confirm Password",
+    "login_button": "Login",
+    "register_button": "Register",
+    "errors": {
+      "email_required": "Email is required",
+      "email_invalid": "Please enter a valid email address",
+      "password_required": "Password is required",
+      "password_short": "Password must be at least 8 characters long",
+      "name_required": "Name is required",
+      "username_required": "Username is required",
+      "username_spaces": "Username must not contain spaces",
+      "password_lowercase": "Password must contain at least one lowercase letter",
+      "password_uppercase": "Password must contain at least one uppercase letter",
+      "password_digit": "Password must contain at least one digit",
+      "password_special": "Password must contain at least one special character (*@%$#)",
+      "confirm_required": "Confirm password is required",
+      "confirm_match": "Passwords do not match"
+    }
+  },
+  "common": {
+    "loading": "Loading...",
+    "error": "Something went wrong",
+    "error_movies": "Failed to load movies. Please try again later.",
+    "error_movie_details": "Failed to load movie details. Please try again later.",
+    "retry": "Try Again",
+    "empty": "No results found.",
+    "empty_movies": "No movies found",
+    "movie_not_found": "Movie not found.",
+    "hd": "HD",
+    "reload_page": "Reload Page"
+  }
+}

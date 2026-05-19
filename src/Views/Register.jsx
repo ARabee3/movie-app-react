@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { useTranslation } from "react-i18next";
 import Container from "@mui/material/Container";
 import Typography from "@mui/material/Typography";
 import TextField from "@mui/material/TextField";
@@ -10,6 +11,7 @@ import { useHistory } from "react-router-dom";
 // UI/form-handling practice only — no backend.
 // Replace with real authentication (Supabase, Firebase, etc.) for production.
 function Register() {
+  const { t } = useTranslation();
   const [email, setEmail] = useState("");
   const [name, setName] = useState("");
   const [username, setUsername] = useState("");
@@ -23,28 +25,28 @@ function Register() {
   const validateField = (field, value) => {
     switch (field) {
       case "email":
-        if (!value.trim()) return "Email is required";
+        if (!value.trim()) return t("auth.errors.email_required");
         if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(value))
-          return "Please enter a valid email address";
+          return t("auth.errors.email_invalid");
         return undefined;
       case "name":
-        if (!value.trim()) return "Name is required";
+        if (!value.trim()) return t("auth.errors.name_required");
         return undefined;
       case "username":
-        if (!value.trim()) return "Username is required";
-        if (value.includes(" ")) return "Username must not contain spaces";
+        if (!value.trim()) return t("auth.errors.username_required");
+        if (value.includes(" ")) return t("auth.errors.username_spaces");
         return undefined;
       case "password":
-        if (!value) return "Password is required";
-        if (value.length < 8) return "Password must be at least 8 characters long";
-        if (!/[a-z]/.test(value)) return "Password must contain at least one lowercase letter";
-        if (!/[A-Z]/.test(value)) return "Password must contain at least one uppercase letter";
-        if (!/[0-9]/.test(value)) return "Password must contain at least one digit";
-        if (!/[*@%$#]/.test(value)) return "Password must contain at least one special character (*@%$#)";
+        if (!value) return t("auth.errors.password_required");
+        if (value.length < 8) return t("auth.errors.password_short");
+        if (!/[a-z]/.test(value)) return t("auth.errors.password_lowercase");
+        if (!/[A-Z]/.test(value)) return t("auth.errors.password_uppercase");
+        if (!/[0-9]/.test(value)) return t("auth.errors.password_digit");
+        if (!/[*@%$#]/.test(value)) return t("auth.errors.password_special");
         return undefined;
       case "confirmPassword":
-        if (!value) return "Confirm password is required";
-        if (value !== password) return "Passwords do not match";
+        if (!value) return t("auth.errors.confirm_required");
+        if (value !== password) return t("auth.errors.confirm_match");
         return undefined;
       default:
         return undefined;
@@ -104,8 +106,9 @@ function Register() {
         alignItems: "center",
         justifyContent: "center",
         px: 2,
-        py: { xs: 8, md: 4 },
-        minHeight: { md: "calc(100vh - 70px)" },
+        pt: { xs: 12, md: 12 },
+        pb: { xs: 8, md: 4 },
+        minHeight: { md: "100vh" },
       }}
     >
       <Container maxWidth="xs" disableGutters>
@@ -128,11 +131,11 @@ function Register() {
             component="h1"
             sx={{ fontWeight: "bold", mb: 1, textAlign: "center" }}
           >
-            Sign Up
+            {t("auth.signup")}
           </Typography>
 
           <TextField
-            label="Email Address"
+            label={t("auth.email")}
             variant="outlined"
             type="text"
             value={email}
@@ -148,7 +151,7 @@ function Register() {
           />
 
           <TextField
-            label="Name"
+            label={t("auth.name")}
             variant="outlined"
             type="text"
             value={name}
@@ -164,7 +167,7 @@ function Register() {
           />
 
           <TextField
-            label="Username"
+            label={t("auth.username")}
             variant="outlined"
             type="text"
             value={username}
@@ -180,7 +183,7 @@ function Register() {
           />
 
           <TextField
-            label="Password"
+            label={t("auth.password")}
             variant="outlined"
             type="password"
             value={password}
@@ -195,7 +198,7 @@ function Register() {
           />
 
           <TextField
-            label="Confirm Password"
+            label={t("auth.confirm_password")}
             variant="outlined"
             type="password"
             value={confirmPassword}
@@ -217,7 +220,7 @@ function Register() {
             fullWidth
             disabled={submitting}
           >
-            {submitting ? <CircularProgress size={24} color="inherit" /> : "Register"}
+            {submitting ? <CircularProgress size={24} color="inherit" /> : t("auth.register_button")}
           </Button>
         </Box>
       </Container>

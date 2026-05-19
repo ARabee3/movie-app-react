@@ -1,9 +1,10 @@
-import { Component } from "react";
+import React, { Component } from "react";
 import Box from "@mui/material/Box";
 import Typography from "@mui/material/Typography";
 import Button from "@mui/material/Button";
+import { useTranslation } from "react-i18next";
 
-class ErrorBoundary extends Component {
+class ErrorBoundaryClass extends Component {
   constructor(props) {
     super(props);
     this.state = { hasError: false, error: null };
@@ -30,7 +31,7 @@ class ErrorBoundary extends Component {
           }}
         >
           <Typography variant="h4" sx={{ fontWeight: 700, mb: 2 }}>
-            Something went wrong
+            {this.props.t("common.error")}
           </Typography>
           <Typography variant="body1" sx={{ color: "text.secondary", mb: 4, maxWidth: 480 }}>
             {this.state.error?.message || "An unexpected error occurred."}
@@ -39,7 +40,7 @@ class ErrorBoundary extends Component {
             variant="contained"
             onClick={() => window.location.reload()}
           >
-            Reload Page
+            {this.props.t("common.reload_page")}
           </Button>
         </Box>
       );
@@ -47,6 +48,11 @@ class ErrorBoundary extends Component {
 
     return this.props.children;
   }
+}
+
+function ErrorBoundary(props) {
+  const { t } = useTranslation();
+  return <ErrorBoundaryClass {...props} t={t} />;
 }
 
 export default ErrorBoundary;

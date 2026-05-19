@@ -1,26 +1,18 @@
 import { useQuery } from "@tanstack/react-query";
 import { useLocation, useHistory } from "react-router-dom";
-import {
-  Box,
-  Container,
-  Typography,
-  Tabs,
-  Tab,
-  Pagination,
-  Stack,
-  Divider,
-} from "@mui/material";
+import { useTranslation } from "react-i18next";
+import Box from "@mui/material/Box";
+import Container from "@mui/material/Container";
+import Typography from "@mui/material/Typography";
+import Tabs from "@mui/material/Tabs";
+import Tab from "@mui/material/Tab";
+import Pagination from "@mui/material/Pagination";
 import MovieGrid from "../Components/Movies/MovieGrid";
 import FilterBar from "../Components/common/FilterBar";
 import { useMovieCategory } from "../hooks/useMovieCategory";
 import { fetchGenres } from "../api/movieApi";
 
-const CATEGORIES = [
-  { value: "popular", label: "Popular" },
-  { value: "now_playing", label: "Now Playing" },
-  { value: "top_rated", label: "Top Rated" },
-  { value: "upcoming", label: "Upcoming" },
-];
+const CATEGORY_KEYS = ["popular", "now_playing", "top_rated", "upcoming"];
 
 function parseFilters(params) {
   const filters = {};
@@ -45,11 +37,11 @@ function filtersToParams(filters) {
 }
 
 function findClosestTab(value) {
-  const valid = CATEGORIES.map((c) => c.value);
-  return valid.includes(value) ? value : "popular";
+  return CATEGORY_KEYS.includes(value) ? value : "popular";
 }
 
 function MoviesPage() {
+  const { t } = useTranslation();
   const location = useLocation();
   const history = useHistory();
 
@@ -101,83 +93,72 @@ function MoviesPage() {
   }
 
   return (
-    <Box sx={{ pb: 10, pt: { xs: 12, md: 16 } }}>
-      <Container maxWidth="xl" sx={{ px: { xs: 2, md: 4, lg: 6 } }}>
-        <Stack spacing={6}>
-          <Box>
-            <Typography
-              variant="h3"
-              sx={{
-                fontWeight: 900,
-                fontSize: { xs: "2rem", sm: "2.5rem", md: "3.5rem" },
-                mb: 1,
-              }}
-            >
-              Explore Movies
-            </Typography>
-            <Typography
-              variant="body1"
-              sx={{ color: "text.secondary", fontSize: { xs: "0.9rem", md: "1.1rem" } }}
-            >
-              Discover the latest and greatest in cinema
-            </Typography>
+    <Box sx={{ pb: 8 }}>
+      <Box
+        sx={{
+          pt: { xs: 14, md: 16 },
+          pb: { xs: 2, md: 3 },
+          textAlign: "center",
+        }}
+      >
+        <Typography
+          variant="h3"
+          sx={{
+            fontWeight: 800,
+            fontSize: { xs: "1.75rem", sm: "2.5rem", md: "3.5rem" },
+            mb: 1,
+          }}
+        >
+          {t("moviespage.title")}
+        </Typography>
+        <Typography
+          variant="body1"
+          sx={{ color: "text.secondary", mb: 3, fontSize: { xs: "0.85rem", md: "1.1rem" } }}
+        >
+          {t("moviespage.subtitle")}
+        </Typography>
+      </Box>
+
+      <Container maxWidth="xl">
+        <Tabs
+          value={category}
+          onChange={handleTabChange}
+          textColor="secondary"
+          indicatorColor="secondary"
+          variant="scrollable"
+          scrollButtons="auto"
+          sx={{ mb: 3, "& .MuiTab-root": { textTransform: "none", fontSize: "1rem", fontWeight: 600 } }}
+        >
+          {CATEGORY_KEYS.map((key) => (
+            <Tab key={key} value={key} label={t(`moviespage.categories.${key}`)} />
+          ))}
+        </Tabs>
+
+        <Box sx={{ mb: 3 }}>
+          <FilterBar genres={genres || []} filters={filters} onFilterChange={handleFilterChange} />
+        </Box>
+
+        {hasFilters && (
+          <Typography sx={{ mb: 2, color: "text.secondary", fontSize: "0.9rem" }}>
+            {t("moviespage.filtered_results")}
+          </Typography>
+        )}
+
+        <MovieGrid movies={movies} isLoading={isLoading} error={error} />
+
+        {totalPages > 1 && (
+          <Box sx={{ display: "flex", justifyContent: "center", mt: 4, mb: 2 }}>
+            <Pagination
+              count={totalPages > 500 ? 500 : totalPages}
+              page={page}
+              onChange={handlePageChange}
+              color="primary"
+              size="large"
+              showFirstButton
+              showLastButton
+            />
           </Box>
-
-          <Box sx={{ borderBottom: 1, borderColor: "rgba(255,255,255,0.1)" }}>
-            <Tabs
-              value={category}
-              onChange={handleTabChange}
-              variant="scrollable"
-              scrollButtons="auto"
-              sx={{
-                "& .MuiTabs-indicator": { height: 3, borderRadius: "3px 3px 0 0" },
-                "& .MuiTab-root": {
-                  textTransform: "none",
-                  fontSize: "1rem",
-                  fontWeight: 700,
-                  minWidth: 100,
-                  color: "text.secondary",
-                  "&.Mui-selected": { color: "primary.main" }
-                }
-              }}
-            >
-              {CATEGORIES.map((c) => (
-                <Tab key={c.value} value={c.value} label={c.label} />
-              ))}
-            </Tabs>
-          </Box>
-
-          <Box>
-            <FilterBar genres={genres || []} filters={filters} onFilterChange={handleFilterChange} />
-          </Box>
-
-          <Divider sx={{ opacity: 0.1 }} />
-
-          <Box>
-            <MovieGrid movies={movies} isLoading={isLoading} error={error} />
-          </Box>
-
-          {totalPages > 1 && (
-            <Box sx={{ display: "flex", justifyContent: "center", pt: 4 }}>
-              <Pagination
-                count={totalPages > 500 ? 500 : totalPages}
-                page={page}
-                onChange={handlePageChange}
-                color="primary"
-                size="large"
-                sx={{
-                  "& .MuiPaginationItem-root": {
-                    borderRadius: 2,
-                    fontWeight: 700,
-                    bgcolor: "rgba(255,255,255,0.03)",
-                    "&:hover": { bgcolor: "rgba(255,255,255,0.08)" },
-                    "&.Mui-selected": { bgcolor: "primary.main" }
-                  }
-                }}
-              />
-            </Box>
-          )}
-        </Stack>
+        )}
       </Container>
     </Box>
   );

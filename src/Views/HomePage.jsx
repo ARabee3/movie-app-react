@@ -1,18 +1,20 @@
-import { useMemo } from "react";
+import { useState } from "react";
 import { useLocation, useHistory } from "react-router-dom";
-import {
-  Box,
-  Typography,
-  Container,
-  Pagination,
-} from "@mui/material";
+import { useTranslation } from "react-i18next";
+import Box from "@mui/material/Box";
+import Typography from "@mui/material/Typography";
+import Container from "@mui/material/Container";
+import TextField from "@mui/material/TextField";
+import InputAdornment from "@mui/material/InputAdornment";
+import IconButton from "@mui/material/IconButton";
+import SearchIcon from "@mui/icons-material/Search";
+import ClearIcon from "@mui/icons-material/Clear";
+import Pagination from "@mui/material/Pagination";
 import MovieGrid from "../Components/Movies/MovieGrid";
-import MovieCarousel from "../Components/Movies/MovieCarousel";
-import HeroSection from "../Components/Movies/HeroSection";
 import { useMovieList } from "../hooks/useMovieList";
-import { useMovieCategory } from "../hooks/useMovieCategory";
 
 function HomePage() {
+  const { t } = useTranslation();
   const location = useLocation();
   const history = useHistory();
 
@@ -20,18 +22,12 @@ function HomePage() {
   const queryFromUrl = params.get("q") || "";
   const pageFromUrl = parseInt(params.get("page"), 10) || 1;
 
-  const { movies: searchMovies, totalPages, isLoading: searchLoading, error: searchError } = useMovieList({
+  const [searchInput, setSearchInput] = useState(queryFromUrl);
+
+  const { movies, totalPages, isLoading, error } = useMovieList({
     searchQuery: queryFromUrl,
     page: pageFromUrl,
   });
-
-  const popular = useMovieCategory({ category: "popular" });
-  const topRated = useMovieCategory({ category: "top_rated" });
-  const upcoming = useMovieCategory({ category: "upcoming" });
-
-  const featuredMovie = useMemo(() => {
-    return popular.movies && popular.movies.length > 0 ? popular.movies[0] : null;
-  }, [popular.movies]);
 
   function updateUrl(q, p) {
     const newParams = new URLSearchParams();
@@ -41,52 +37,117 @@ function HomePage() {
     history.replace({ search: search ? `?${search}` : "" });
   }
 
+  function handleSubmit(e) {
+    e.preventDefault();
+    updateUrl(searchInput, 1);
+  }
+
+  function handleClear() {
+    setSearchInput("");
+    updateUrl("", 1);
+  }
+
   function handlePageChange(_, value) {
     updateUrl(queryFromUrl, value);
     window.scrollTo({ top: 0, behavior: "smooth" });
   }
 
-  const isSearching = !!queryFromUrl;
-
   return (
-    <Box sx={{ pb: 8, bgcolor: "background.default", minHeight: "100vh" }}>
-      {!isSearching ? (
-        <Box>
-          <HeroSection movie={featuredMovie} isLoading={popular.isLoading} />
-          <Container maxWidth="xl" sx={{ mt: -8, position: "relative", zIndex: 3 }}>
-            <MovieCarousel title="Trending Now" movies={popular.movies} isLoading={popular.isLoading} />
-            <MovieCarousel title="Top Rated" movies={topRated.movies} isLoading={topRated.isLoading} />
-            <MovieCarousel title="Upcoming Releases" movies={upcoming.movies} isLoading={upcoming.isLoading} />
-          </Container>
-        </Box>
-      ) : (
-        <Box sx={{ pt: { xs: 12, md: 16 } }}>
-          <Container maxWidth="xl">
-            <Typography variant="h4" sx={{ mb: 4, fontWeight: 800 }}>
-              Results for "{queryFromUrl}"
-            </Typography>
-            <MovieGrid movies={searchMovies} isLoading={searchLoading} error={searchError} />
+    <Box sx={{ pb: 8 }}>
+      <Box
+        sx={{
+          pt: { xs: 14, md: 18 },
+          pb: { xs: 4, md: 6 },
+          textAlign: "center",
+        }}
+      >
+        <Typography
+          variant="h3"
+          sx={{
+            fontWeight: 800,
+            fontSize: { xs: "1.75rem", sm: "2.5rem", md: "3.5rem" },
+            mb: 1,
+            px: 2,
+          }}
+        >
+          {t("homepage.title")}
+        </Typography>
+        <Typography
+          variant="body1"
+          sx={{
+            color: "text.secondary",
+            mb: 4,
+            fontSize: { xs: "0.85rem", sm: "1rem", md: "1.1rem" },
+            px: 4,
+          }}
+        >
+          {t("homepage.subtitle")}
+        </Typography>
 
-            {totalPages > 1 && (
-              <Box sx={{ display: "flex", justifyContent: "center", mt: 6 }}>
-                <Pagination
-                  count={totalPages > 500 ? 500 : totalPages}
-                  page={pageFromUrl}
-                  onChange={handlePageChange}
-                  color="primary"
-                  size="large"
-                  sx={{
-                    "& .MuiPaginationItem-root": {
-                      borderRadius: 2,
-                      fontWeight: 600
-                    }
-                  }}
-                />
-              </Box>
-            )}
-          </Container>
-        </Box>
-      )}
+        <Container maxWidth="sm" component="form" onSubmit={handleSubmit}>
+          <TextField
+            fullWidth
+            placeholder={t("homepage.search_placeholder")}
+            value={searchInput}
+            onChange={(e) => setSearchInput(e.target.value)}
+            slotProps={{
+              input: {
+                startAdornment: (
+                  <InputAdornment position="start">
+                    <IconButton type="submit" size="small" sx={{ color: "text.secondary" }}>
+                      <SearchIcon />
+                    </IconButton>
+                  </InputAdornment>
+                ),
+                endAdornment: searchInput ? (
+                  <InputAdornment position="end">
+                    <IconButton size="small" onClick={handleClear}>
+                      <ClearIcon fontSize="small" />
+                    </IconButton>
+                  </InputAdornment>
+                ) : null,
+              },
+            }}
+            sx={{
+              "& .MuiOutlinedInput-root": {
+                bgcolor: "background.paper",
+                borderRadius: 3,
+                "&:hover .MuiOutlinedInput-notchedOutline": {
+                  borderColor: "primary.main",
+                },
+              },
+            }}
+          />
+        </Container>
+      </Box>
+
+      <Container maxWidth="xl">
+        {queryFromUrl && (
+          <Typography sx={{ mb: 2, color: "text.secondary" }}>
+            {movies.length > 0
+              ? t("homepage.results_for", { query: queryFromUrl })
+              : t("homepage.no_results", { query: queryFromUrl })}
+          </Typography>
+        )}
+
+        <MovieGrid movies={movies} isLoading={isLoading} error={error} />
+
+        {totalPages > 1 && (
+          <Box sx={{ display: "flex", justifyContent: "center", mt: 4, mb: 2 }}>
+            <Pagination
+              count={totalPages > 500 ? 500 : totalPages}
+              page={pageFromUrl}
+              onChange={handlePageChange}
+              color="primary"
+              size="large"
+              showFirstButton
+              showLastButton
+              siblingCount={1}
+              boundaryCount={1}
+            />
+          </Box>
+        )}
+      </Container>
     </Box>
   );
 }

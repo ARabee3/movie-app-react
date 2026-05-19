@@ -17,13 +17,17 @@ export async function fetchGenres() {
   return res.data.genres;
 }
 
-export async function fetchMovieDetails(id) {
-  const res = await axios.get(`${BASE}/movie/${id}?api_key=${KEY}`);
+export async function fetchMovieDetails(id, lang = "en-US") {
+  const res = await axios.get(
+    `${BASE}/movie/${id}?api_key=${KEY}&language=${lang}`,
+  );
   return res.data;
 }
 
-export async function fetchCredits(id) {
-  const res = await axios.get(`${BASE}/movie/${id}/credits?api_key=${KEY}`);
+export async function fetchCredits(id, lang = "en-US") {
+  const res = await axios.get(
+    `${BASE}/movie/${id}/credits?api_key=${KEY}&language=${lang}`,
+  );
   return res.data;
 }
 

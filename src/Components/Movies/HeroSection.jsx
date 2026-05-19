@@ -2,9 +2,14 @@ import { Box, Typography, Button, Container, Stack, Skeleton } from "@mui/materi
 import PlayArrowIcon from "@mui/icons-material/PlayArrow";
 import InfoOutlinedIcon from "@mui/icons-material/InfoOutlined";
 import { useHistory } from "react-router-dom";
+import { useTheme } from "@mui/material/styles";
+import { useTranslation } from "react-i18next";
 
 function HeroSection({ movie, isLoading }) {
   const history = useHistory();
+  const theme = useTheme();
+  const isRTL = theme.direction === "rtl";
+  const { t } = useTranslation();
 
   if (isLoading || !movie) {
     return (
@@ -23,18 +28,9 @@ function HeroSection({ movie, isLoading }) {
         display: "flex",
         alignItems: "center",
         overflow: "hidden",
-        "&::after": {
-          content: '""',
-          position: "absolute",
-          top: 0,
-          left: 0,
-          right: 0,
-          bottom: 0,
-          background: "linear-gradient(to right, rgba(20,20,20,0.9) 0%, rgba(20,20,20,0.4) 40%, transparent 100%), linear-gradient(to top, rgba(20,20,20,1) 0%, transparent 30%)",
-          zIndex: 1,
-        },
       }}
     >
+      {/* Backdrop image */}
       <Box
         component="img"
         src={movie.backdrop}
@@ -47,6 +43,18 @@ function HeroSection({ movie, isLoading }) {
           height: "100%",
           objectFit: "cover",
           zIndex: 0,
+        }}
+      />
+
+      {/* Direction-aware gradient overlay */}
+      <Box
+        sx={{
+          position: "absolute",
+          inset: 0,
+          background: isRTL
+            ? `linear-gradient(to left, rgba(20,20,20,0.25) 0%, rgba(20,20,20,0.65) 45%, rgba(20,20,20,0.9) 100%), linear-gradient(to top, rgba(20,20,20,1) 0%, transparent 30%)`
+            : `linear-gradient(to right, rgba(20,20,20,0.25) 0%, rgba(20,20,20,0.65) 45%, rgba(20,20,20,0.9) 100%), linear-gradient(to top, rgba(20,20,20,1) 0%, transparent 30%)`,
+          zIndex: 1,
         }}
       />
 
@@ -97,7 +105,7 @@ function HeroSection({ movie, isLoading }) {
                 "&:hover": { bgcolor: "rgba(255,255,255,0.8)" },
               }}
             >
-              Play
+              {t("movie_details.watch_now")}
             </Button>
             <Button
               variant="contained"
@@ -114,7 +122,7 @@ function HeroSection({ movie, isLoading }) {
                 "&:hover": { bgcolor: "rgba(109, 109, 110, 0.5)" },
               }}
             >
-              More Info
+              {t("movie_details.overview")}
             </Button>
           </Stack>
         </Box>

@@ -3,16 +3,19 @@ import ChevronLeftIcon from "@mui/icons-material/ChevronLeft";
 import ChevronRightIcon from "@mui/icons-material/ChevronRight";
 import MovieCard from "./MovieCard";
 import { useRef } from "react";
+import { useTheme } from "@mui/material/styles";
 
 function MovieCarousel({ title, movies = [], isLoading }) {
   const scrollRef = useRef(null);
+  const theme = useTheme();
+  const isRTL = theme.direction === "rtl";
 
   const scroll = (direction) => {
     if (scrollRef.current) {
       const { scrollLeft, clientWidth } = scrollRef.current;
-      const scrollTo = direction === "left" 
-        ? scrollLeft - clientWidth * 0.8 
-        : scrollLeft + clientWidth * 0.8;
+      const sign = direction === "backward" ? -1 : 1;
+      const rtlMultiplier = isRTL ? -1 : 1;
+      const scrollTo = scrollLeft + (clientWidth * 0.8 * sign * rtlMultiplier);
       
       scrollRef.current.scrollTo({ left: scrollTo, behavior: "smooth" });
     }
@@ -38,7 +41,7 @@ function MovieCarousel({ title, movies = [], isLoading }) {
       <Box sx={{ position: "relative", group: "true" }}>
         {/* Navigation Buttons - Hidden on mobile, visible on hover on desktop */}
         <IconButton
-          onClick={() => scroll("left")}
+          onClick={() => scroll("backward")}
           sx={{
             position: "absolute",
             left: -20,
@@ -53,11 +56,11 @@ function MovieCarousel({ title, movies = [], isLoading }) {
             border: "1px solid rgba(255,255,255,0.1)",
           }}
         >
-          <ChevronLeftIcon />
+          <ChevronLeftIcon sx={{ transform: isRTL ? 'rotate(180deg)' : 'none' }} />
         </IconButton>
 
         <IconButton
-          onClick={() => scroll("right")}
+          onClick={() => scroll("forward")}
           sx={{
             position: "absolute",
             right: -20,
@@ -72,7 +75,7 @@ function MovieCarousel({ title, movies = [], isLoading }) {
             border: "1px solid rgba(255,255,255,0.1)",
           }}
         >
-          <ChevronRightIcon />
+          <ChevronRightIcon sx={{ transform: isRTL ? 'rotate(180deg)' : 'none' }} />
         </IconButton>
 
         <Box

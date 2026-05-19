@@ -111,7 +111,7 @@ function MovieCard({ movie, loading = false }) {
           sx={{
             position: "absolute",
             top: 10,
-            right: 10,
+            insetInlineEnd: 10,
             display: "flex",
             alignItems: "center",
             gap: 0.5,

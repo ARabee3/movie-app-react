@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { useTranslation } from "react-i18next";
 import Container from "@mui/material/Container";
 import Typography from "@mui/material/Typography";
 import TextField from "@mui/material/TextField";
@@ -10,6 +11,7 @@ import { useHistory } from "react-router-dom";
 // UI/form-handling practice only — no backend.
 // Replace with real authentication (Supabase, Firebase, etc.) for production.
 function Login() {
+  const { t } = useTranslation();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [errors, setErrors] = useState({});
@@ -19,14 +21,14 @@ function Login() {
 
   const validateField = (field, value) => {
     if (field === "email") {
-      if (!value.trim()) return "Email is required";
+      if (!value.trim()) return t("auth.errors.email_required");
       if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(value))
-        return "Please enter a valid email address";
+        return t("auth.errors.email_invalid");
     }
     if (field === "password") {
-      if (!value) return "Password is required";
+      if (!value) return t("auth.errors.password_required");
       if (value.length < 8)
-        return "Password must be at least 8 characters long";
+        return t("auth.errors.password_short");
     }
     return undefined;
   };
@@ -69,8 +71,9 @@ function Login() {
         alignItems: "center",
         justifyContent: "center",
         px: 2,
-        py: { xs: 8, md: 0 },
-        minHeight: { md: "calc(100vh - 70px)" },
+        pt: { xs: 12, md: 12 },
+        pb: { xs: 8, md: 4 },
+        minHeight: { md: "100vh" },
       }}
     >
       <Container maxWidth="xs" disableGutters>
@@ -93,11 +96,11 @@ function Login() {
             component="h1"
             sx={{ fontWeight: "bold", mb: 1, textAlign: "center" }}
           >
-            Sign In
+            {t("auth.signin")}
           </Typography>
 
           <TextField
-            label="Email Address"
+            label={t("auth.email")}
             variant="outlined"
             type="text"
             value={email}
@@ -115,7 +118,7 @@ function Login() {
           />
 
           <TextField
-            label="Password"
+            label={t("auth.password")}
             variant="outlined"
             type="password"
             value={password}
@@ -139,7 +142,7 @@ function Login() {
             fullWidth
             disabled={submitting}
           >
-            {submitting ? <CircularProgress size={24} color="inherit" /> : "Login"}
+            {submitting ? <CircularProgress size={24} color="inherit" /> : t("auth.login_button")}
           </Button>
         </Box>
       </Container>

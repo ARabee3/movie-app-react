@@ -11,7 +11,6 @@ import {
   ListItem,
   ListItemButton,
   ListItemText,
-  Divider,
   TextField,
   InputAdornment,
   Container,
@@ -19,6 +18,8 @@ import {
 import MenuIcon from "@mui/icons-material/Menu";
 import SearchIcon from "@mui/icons-material/Search";
 import { useHistory, useLocation } from "react-router-dom";
+import { useTranslation } from "react-i18next";
+import { useLanguage } from "../context/LanguageContext";
 
 function Navbar() {
   const [scrolled, setScrolled] = useState(false);
@@ -26,6 +27,9 @@ function Navbar() {
   const [navSearch, setNavSearch] = useState("");
   const history = useHistory();
   const location = useLocation();
+  const { t } = useTranslation();
+  const { lang, changeLanguage } = useLanguage();
+  const isRTL = lang === "ar";
 
   useEffect(() => {
     const handleScroll = () => {
@@ -98,7 +102,7 @@ function Navbar() {
                   "&:hover": { color: "primary.main", bgcolor: "transparent" },
                 }}
               >
-                Movies
+                {t("nav.movies")}
               </Button>
             </Box>
 
@@ -108,24 +112,26 @@ function Navbar() {
               onSubmit={handleNavSearch}
               sx={{
                 flexGrow: 1,
-                display: { xs: "none", md: "flex" },
+                display: { xs: "none", md: isHome ? "none" : "flex" },
                 justifyContent: "center",
                 maxWidth: 600,
                 mx: "auto",
               }}
             >
               <TextField
-                placeholder="Search for movies, actors, genres..."
+                placeholder={t("nav.search_placeholder")}
                 size="small"
                 fullWidth
                 value={navSearch}
                 onChange={(e) => setNavSearch(e.target.value)}
-                InputProps={{
-                  startAdornment: (
-                    <InputAdornment position="start">
-                      <SearchIcon sx={{ color: "rgba(255,255,255,0.4)", fontSize: 20 }} />
-                    </InputAdornment>
-                  ),
+                slotProps={{
+                  input: {
+                    startAdornment: (
+                      <InputAdornment position="start">
+                        <SearchIcon sx={{ color: "rgba(255,255,255,0.4)", fontSize: 20 }} />
+                      </InputAdornment>
+                    ),
+                  },
                 }}
                 sx={{
                   "& .MuiOutlinedInput-root": {
@@ -155,6 +161,23 @@ function Navbar() {
               />
             </Box>
 
+            {/* Desktop Actions */}
+            <Box sx={{ display: { xs: "none", md: "flex" }, alignItems: "center", gap: 1 }}>
+              <Button
+                onClick={() => changeLanguage(isRTL ? "en" : "ar")}
+                sx={{
+                  color: "white",
+                  textTransform: "none",
+                  fontWeight: 700,
+                  fontSize: "0.9rem",
+                  minWidth: 40,
+                  "&:hover": { color: "primary.main", bgcolor: "transparent" },
+                }}
+              >
+                {isRTL ? "EN" : "AR"}
+              </Button>
+            </Box>
+
             {/* Mobile Actions */}
             <Box sx={{ display: { xs: "flex", md: "none" }, alignItems: "center", gap: 1, ml: "auto" }}>
               <IconButton sx={{ color: "white" }} onClick={toggleDrawer}>
@@ -167,7 +190,7 @@ function Navbar() {
 
       {/* Mobile Drawer */}
       <Drawer
-        anchor="right"
+        anchor={isRTL ? "left" : "right"}
         open={mobileOpen}
         onClose={toggleDrawer}
         PaperProps={{
@@ -189,16 +212,18 @@ function Navbar() {
           <Box component="form" onSubmit={handleNavSearch} sx={{ mb: 4 }}>
             <TextField
               fullWidth
-              placeholder="Search..."
+              placeholder={t("nav.search_placeholder")}
               size="small"
               value={navSearch}
               onChange={(e) => setNavSearch(e.target.value)}
-              InputProps={{
-                startAdornment: (
-                  <InputAdornment position="start">
-                    <SearchIcon sx={{ color: "text.secondary", fontSize: 20 }} />
-                  </InputAdornment>
-                ),
+              slotProps={{
+                input: {
+                  startAdornment: (
+                    <InputAdornment position="start">
+                      <SearchIcon sx={{ color: "text.secondary", fontSize: 20 }} />
+                    </InputAdornment>
+                  ),
+                },
               }}
               sx={{
                 "& .MuiOutlinedInput-root": {
@@ -212,9 +237,10 @@ function Navbar() {
 
           <List spacing={1}>
             {[
-              { label: "Home", path: "/" },
-              { label: "Movies", path: "/movies" },
-              { label: "Profile", path: "/profile" },
+              { label: t("nav.home"), path: "/" },
+              { label: t("nav.movies"), path: "/movies" },
+              { label: t("nav.login"), path: "/login" },
+              { label: t("nav.register"), path: "/register" },
             ].map((item) => (
               <ListItem key={item.path} disablePadding sx={{ mb: 1 }}>
                 <ListItemButton
@@ -236,6 +262,26 @@ function Navbar() {
               </ListItem>
             ))}
           </List>
+
+          <Box sx={{ mt: 2 }}>
+            <Button
+              fullWidth
+              onClick={() => {
+                changeLanguage(isRTL ? "en" : "ar");
+                setMobileOpen(false);
+              }}
+              sx={{
+                color: "white",
+                textTransform: "none",
+                fontWeight: 700,
+                borderRadius: 2,
+                py: 1,
+                border: "1px solid rgba(255,255,255,0.1)",
+              }}
+            >
+              {isRTL ? "English" : "العربية"}
+            </Button>
+          </Box>
 
         </Box>
       </Drawer>

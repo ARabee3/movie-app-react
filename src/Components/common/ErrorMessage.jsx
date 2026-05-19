@@ -2,12 +2,15 @@ import Box from "@mui/material/Box";
 import Typography from "@mui/material/Typography";
 import Button from "@mui/material/Button";
 import RefreshIcon from "@mui/icons-material/Refresh";
+import { useTranslation } from "react-i18next";
 
-function ErrorMessage({ message = "Something went wrong.", onRetry }) {
+function ErrorMessage({ message, onRetry }) {
+  const { t } = useTranslation();
+
   return (
     <Box sx={{ textAlign: "center", py: 6 }}>
       <Typography variant="h6" sx={{ color: "error.main", mb: 2 }}>
-        {message}
+        {message || t("common.error")}
       </Typography>
       {onRetry && (
         <Button
@@ -16,7 +19,7 @@ function ErrorMessage({ message = "Something went wrong.", onRetry }) {
           startIcon={<RefreshIcon />}
           onClick={onRetry}
         >
-          Try Again
+          {t("common.retry")}
         </Button>
       )}
     </Box>
