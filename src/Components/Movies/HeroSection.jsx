@@ -2,13 +2,10 @@ import { Box, Typography, Button, Container, Stack, Skeleton } from "@mui/materi
 import PlayArrowIcon from "@mui/icons-material/PlayArrow";
 import InfoOutlinedIcon from "@mui/icons-material/InfoOutlined";
 import { useHistory } from "react-router-dom";
-import { useTheme } from "@mui/material/styles";
 import { useTranslation } from "react-i18next";
 
 function HeroSection({ movie, isLoading }) {
   const history = useHistory();
-  const theme = useTheme();
-  const isRTL = theme.direction === "rtl";
   const { t } = useTranslation();
 
   if (isLoading || !movie) {
@@ -46,14 +43,11 @@ function HeroSection({ movie, isLoading }) {
         }}
       />
 
-      {/* Direction-aware gradient overlay */}
       <Box
         sx={{
           position: "absolute",
           inset: 0,
-          background: isRTL
-            ? `linear-gradient(to left, rgba(20,20,20,0.25) 0%, rgba(20,20,20,0.65) 45%, rgba(20,20,20,0.9) 100%), linear-gradient(to top, rgba(20,20,20,1) 0%, transparent 30%)`
-            : `linear-gradient(to right, rgba(20,20,20,0.25) 0%, rgba(20,20,20,0.65) 45%, rgba(20,20,20,0.9) 100%), linear-gradient(to top, rgba(20,20,20,1) 0%, transparent 30%)`,
+          background: `linear-gradient(to right, rgba(20,20,20,0.25) 0%, rgba(20,20,20,0.65) 45%, rgba(20,20,20,0.9) 100%), linear-gradient(0deg, rgba(20,20,20,1) 0%, transparent 30%)`,
           zIndex: 1,
         }}
       />

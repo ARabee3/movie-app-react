@@ -99,7 +99,7 @@ function MovieCard({ movie, loading = false }) {
             left: 0,
             right: 0,
             height: "80%",
-            background: "linear-gradient(to top, rgba(0,0,0,0.95) 0%, rgba(0,0,0,0.5) 50%, transparent 100%)",
+            background: "linear-gradient(0deg, rgba(0,0,0,0.95) 0%, rgba(0,0,0,0.5) 50%, transparent 100%)",
             opacity: 1,
             pointerEvents: "none",
             zIndex: 1,

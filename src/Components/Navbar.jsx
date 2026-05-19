@@ -61,7 +61,7 @@ function Navbar() {
         sx={{
           background: scrolled
             ? "rgba(10, 10, 10, 0.95)"
-            : "linear-gradient(to bottom, rgba(0,0,0,0.8) 0%, transparent 100%)",
+            : "linear-gradient(180deg, rgba(0,0,0,0.8) 0%, transparent 100%)",
           backdropFilter: scrolled ? "blur(15px)" : "none",
           boxShadow: scrolled ? "0 4px 30px rgba(0,0,0,0.5)" : "none",
           borderBottom: scrolled ? "1px solid rgba(255,255,255,0.08)" : "none",

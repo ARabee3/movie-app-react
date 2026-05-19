@@ -20,7 +20,6 @@ import { useMovieDetails } from "../hooks/useMovieDetails";
 import { useLanguage } from "../context/LanguageContext";
 import ErrorMessage from "../Components/common/ErrorMessage";
 import EmptyState from "../Components/common/EmptyState";
-import MovieCarousel from "../Components/Movies/MovieCarousel";
 
 const MovieDetails = () => {
   const { id } = useParams();
@@ -79,14 +78,11 @@ const MovieDetails = () => {
             zIndex: 0,
           }}
         />
-        {/* Gradient overlays — direction-aware for RTL */}
         <Box
           sx={{
             position: "absolute",
             inset: 0,
-            background: lang === "ar"
-              ? "linear-gradient(to left, rgba(20,20,20,0.25) 0%, rgba(20,20,20,0.65) 45%, rgba(20,20,20,0.9) 100%)"
-              : "linear-gradient(to right, rgba(20,20,20,0.25) 0%, rgba(20,20,20,0.65) 45%, rgba(20,20,20,0.9) 100%)",
+            background: "linear-gradient(to right, rgba(20,20,20,0.25) 0%, rgba(20,20,20,0.65) 45%, rgba(20,20,20,0.9) 100%)",
             zIndex: 1,
           }}
         />
@@ -98,7 +94,7 @@ const MovieDetails = () => {
             left: 0,
             right: 0,
             height: "150px",
-            background: "linear-gradient(to top, #141414, transparent)",
+            background: "linear-gradient(0deg, #141414, transparent)",
             zIndex: 2,
           }}
         />
@@ -110,7 +106,7 @@ const MovieDetails = () => {
             sx={{
               position: "absolute",
               top: { xs: -40, md: -50 },
-              ...(lang === "ar" ? { right: 0 } : { left: 0 }),
+              left: 0,
               bgcolor: "rgba(255,255,255,0.1)",
               backdropFilter: "blur(10px)",
               color: "white",
